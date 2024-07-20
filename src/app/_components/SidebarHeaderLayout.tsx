@@ -11,12 +11,14 @@ import { useRouter } from "next/navigation";
 
 const { Header, Sider, Content } = Layout;
 
+const screenNames = ["Dashboard", "Transactions"] as const;
+
 function SideBarHeaderLayout({
   children,
   title,
 }: {
   children: React.ReactNode;
-  title?: string;
+  title?: (typeof screenNames)[number];
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const {
@@ -24,10 +26,6 @@ function SideBarHeaderLayout({
   } = theme.useToken();
 
   const router = useRouter();
-
-  const onMenuClick: MenuProps["onClick"] = (e) => {
-    console.log("click ", e);
-  };
 
   return (
     <body className="flex min-h-screen flex-row">
@@ -37,16 +35,18 @@ function SideBarHeaderLayout({
           <Menu
             mode="inline"
             theme="light"
-            defaultSelectedKeys={["1"]}
+            defaultSelectedKeys={
+              title ? [screenNames.indexOf(title) + ""] : undefined
+            }
             items={[
               {
-                key: "1",
+                key: "0",
                 icon: <AreaChartOutlined />,
                 label: "Dashboard",
                 onClick: () => router.replace("/"),
               },
               {
-                key: "2",
+                key: "1",
                 icon: <TableOutlined />,
                 label: "Transactions",
                 onClick: () => router.replace("/transactions"),
