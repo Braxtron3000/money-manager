@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CreatePost } from "~/app/_components/create-post";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
+import { NavBar } from "./_components/navBar";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
@@ -10,16 +11,7 @@ export default async function Home() {
 
   return (
     <body className="flex min-h-screen flex-row">
-      {session && (
-        <nav className="size-[3rem] justify-center">
-          <div>
-            <Link href={"/receipts"}>
-              <div className="flex-row justify-center ">📈</div>
-            </Link>
-            <div className="flex-row">🧾</div>
-          </div>
-        </nav>
-      )}
+      <NavBar />
       <main className="flex min-h-screen flex-grow flex-col items-center justify-center bg-gradient-to-b from-[#4FB0C6] to-[#4F86C6] text-white">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           {/* <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]"></h1> */}
