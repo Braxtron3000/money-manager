@@ -14,7 +14,7 @@ import { categories, transaction } from "~/types";
 import moment from "moment";
 
 const originData: transaction[] = [];
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 1; i++) {
   originData.push({
     key: i.toString(),
     description: `Edward ${i}`,
