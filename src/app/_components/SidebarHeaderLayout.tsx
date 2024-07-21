@@ -16,9 +16,11 @@ const screenNames = ["Dashboard", "Transactions"] as const;
 function SideBarHeaderLayout({
   children,
   title,
+  showHeader = false,
 }: {
   children: React.ReactNode;
   title?: (typeof screenNames)[number];
+  showHeader?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const {
@@ -55,24 +57,26 @@ function SideBarHeaderLayout({
           />
         </Sider>
         <Layout>
-          <Header
-            style={{
-              padding: 0,
-              background: colorBgContainer,
-            }}
-          >
-            <Button
-              type="text"
-              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
+          {showHeader && (
+            <Header
               style={{
-                fontSize: "16px",
-                width: 64,
-                height: 64,
+                padding: 0,
+                background: colorBgContainer,
               }}
-            />
-            {title}
-          </Header>
+            >
+              <Button
+                type="text"
+                icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                onClick={() => setCollapsed(!collapsed)}
+                style={{
+                  fontSize: "16px",
+                  width: 64,
+                  height: 64,
+                }}
+              />
+              {title}
+            </Header>
+          )}
           <Content
             style={{
               margin: "24px 16px",
