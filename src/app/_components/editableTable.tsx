@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import type { TableProps } from "antd";
+import type { NotificationArgsProps, TableProps } from "antd";
 import {
   Form,
   Input,
   InputNumber,
+  notification,
   Popconfirm,
   Table,
   Tag,
@@ -117,10 +118,25 @@ const EditableTable: React.FC = () => {
         "green";
     }
   };
+  type NotificationPlacement = NotificationArgsProps["placement"];
+  const [api, contextHolder] = notification.useNotification();
 
   const handleDelete = (key: React.Key) => {
+    const deletedItemDescription = data.find(
+      (transaction) => transaction.key === key,
+    )?.description;
     const newData = data.filter((item) => item.key !== key);
     setData(newData);
+
+    if (!deletedItemDescription) {
+      console.error("couldnt find deletedItemDescription");
+    } else {
+      api.info({
+        message: "deleted " + deletedItemDescription,
+        placement: "bottom",
+        duration: 2,
+      });
+    }
   };
 
   const columns = [
@@ -213,22 +229,25 @@ const EditableTable: React.FC = () => {
   });
 
   return (
-    <Form form={form} component={false}>
-      <Table
-        components={{
-          body: {
-            cell: EditableCell,
-          },
-        }}
-        bordered
-        dataSource={data}
-        columns={mergedColumns}
-        rowClassName="editable-row"
-        pagination={{
-          onChange: cancel,
-        }}
-      />
-    </Form>
+    <>
+      {contextHolder}
+      <Form form={form} component={false}>
+        <Table
+          components={{
+            body: {
+              cell: EditableCell,
+            },
+          }}
+          bordered
+          dataSource={data}
+          columns={mergedColumns}
+          rowClassName="editable-row"
+          pagination={{
+            onChange: cancel,
+          }}
+        />
+      </Form>
+    </>
   );
 };
 
