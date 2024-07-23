@@ -58,16 +58,6 @@ export default async function Home() {
 
           <CrudShowcase />
         </div>
-
-        <footer className="container flex flex-col items-center justify-center bg-teal-400">
-          <a
-            className="bg-blue-900"
-            href="https://www.flaticon.com/free-icons/finance"
-            title="finance icons"
-          >
-            Finance icons created by Smashicons - Flaticon
-          </a>
-        </footer>
       </main>
     </SideBarHeaderLayout>
   );
