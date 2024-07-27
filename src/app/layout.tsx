@@ -19,11 +19,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body>
-        <TRPCReactProvider>
-          <AntdRegistry>{children}</AntdRegistry>
-        </TRPCReactProvider>
-      </body>
+      <TRPCReactProvider>
+        <AntdRegistry>{children}</AntdRegistry>
+      </TRPCReactProvider>
     </html>
   );
 }

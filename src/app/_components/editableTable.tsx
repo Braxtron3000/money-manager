@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import type { NotificationArgsProps, TableProps } from "antd";
+import type { CascaderProps, NotificationArgsProps, TableProps } from "antd";
 import {
+  Cascader,
+  DatePicker,
   Form,
   Input,
   InputNumber,
@@ -12,6 +14,8 @@ import {
 } from "antd";
 import { categories, transaction } from "~/types";
 import moment from "moment";
+import dayjs from "dayjs";
+import { ColumnsType } from "antd/es/table";
 
 const originData: transaction[] = [];
 for (let i = 0; i < 1; i++) {
@@ -19,7 +23,7 @@ for (let i = 0; i < 1; i++) {
     key: i.toString(),
     description: `Edward ${i}`,
     pricing: 32,
-    date: moment().subtract(6, "days").calendar(),
+    date: dayjs(),
     category: "Taxes:Federal",
   });
 }
@@ -27,7 +31,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
   title: any;
-  inputType: "number" | "text";
+  inputType: "number" | "text" | "date" | "category";
   record: transaction;
   index: number;
 }
@@ -42,7 +46,42 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   children,
   ...restProps
 }) => {
-  const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
+  const displayRender = (labels: string[]) => labels[labels.length - 1];
+
+  interface Option {
+    value: string;
+    label: string;
+    children?: Option[];
+  }
+  const onChange: CascaderProps<Option>["onChange"] = (value) => {
+    console.log(value);
+  };
+
+  function getInputNode() {
+    switch (inputType) {
+      case "text":
+        return <Input />;
+      case "number":
+        return <InputNumber />;
+      case "date":
+        return <DatePicker />;
+      case "category":
+        return (
+          <Cascader
+            options={[]}
+            expandTrigger="hover"
+            displayRender={displayRender}
+            onChange={onChange}
+          />
+        );
+
+      default:
+        return <Input />;
+    }
+  }
+
+  const inputNode = () =>
+    inputType === "number" ? <InputNumber /> : <Input />;
 
   return (
     <td {...restProps}>
@@ -57,7 +96,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
             },
           ]}
         >
-          {inputNode}
+          {getInputNode()}
         </Form.Item>
       ) : (
         children
@@ -118,7 +157,6 @@ const EditableTable: React.FC = () => {
         "green";
     }
   };
-  type NotificationPlacement = NotificationArgsProps["placement"];
   const [api, contextHolder] = notification.useNotification();
 
   const handleDelete = (key: React.Key) => {
@@ -139,13 +177,14 @@ const EditableTable: React.FC = () => {
     }
   };
 
-  const columns = [
+  const columns: ColumnsType<transaction & { editable: boolean }> = [
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
       width: "40%",
       editable: true,
+      inputType: "text",
     },
     {
       title: "Category",
@@ -156,6 +195,7 @@ const EditableTable: React.FC = () => {
       ),
       width: "25%",
       editable: true,
+      inputType: "category",
     },
     {
       title: "Pricing",
@@ -163,6 +203,7 @@ const EditableTable: React.FC = () => {
       key: "pricing",
       width: "7.5%",
       editable: true,
+      inputType: "number",
     },
     {
       title: "Date",
@@ -170,6 +211,10 @@ const EditableTable: React.FC = () => {
       key: "date",
       width: "11%",
       editable: true,
+      inputType: "date",
+      render: (_, record) => (
+        <h1>{record.date.format("h:mma ddd DD/MM/YY")}</h1>
+      ),
     },
     {
       title: "operation",
@@ -220,7 +265,7 @@ const EditableTable: React.FC = () => {
       ...col,
       onCell: (record: transaction) => ({
         record,
-        inputType: col.dataIndex === "age" ? "number" : "text",
+        inputType: col.inputType,
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),

@@ -1,3 +1,5 @@
+import dayjs, { Dayjs } from "dayjs";
+
 export type categories =
   | "Taxes:FICA (social security & medicare)"
   | "Taxes:Federal"
@@ -68,5 +70,5 @@ export type transaction = {
   description: string;
   category: categories;
   pricing: number;
-  date: string;
+  date: Dayjs;
 };
