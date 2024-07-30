@@ -12,8 +12,7 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { categories, transaction } from "~/types";
-import moment from "moment";
+import { categories, categoryTree, transaction } from "~/types";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/es/table";
 
@@ -46,7 +45,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   children,
   ...restProps
 }) => {
-  const displayRender = (labels: string[]) => labels[labels.length - 1];
+  // const displayRender = (labels: string[]) => labels[labels.length - 1];
 
   interface Option {
     value: string;
@@ -68,9 +67,10 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       case "category":
         return (
           <Cascader
-            options={[]}
-            expandTrigger="hover"
-            displayRender={displayRender}
+            options={categoryTree}
+            // expandTrigger="hover"
+            displayRender={(label) => label.join("    ")}
+            // displayRender={displayRender}
             onChange={onChange}
           />
         );
@@ -79,9 +79,6 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         return <Input />;
     }
   }
-
-  const inputNode = () =>
-    inputType === "number" ? <InputNumber /> : <Input />;
 
   return (
     <td {...restProps}>
@@ -145,17 +142,23 @@ const EditableTable: React.FC = () => {
     }
   };
 
-  const categoryColors = (category: categories) => {
-    switch (category) {
-      case "Attire:clothing":
-        return "geekblue";
-        break;
-      case "Education:Tuition":
-        return "volcano";
+  const categoryColors = (category: string) => {
+    // type mainCategories = 'Taxes' | 'Housing'|'Food'|'Transportation''Debt repayments'
 
-      default:
-        "green";
-    }
+    if (category.includes("Taxes")) return "blue";
+    else if (category.includes("Housing")) return "HotPink";
+    else if (category.includes("Food")) return "purple";
+    else if (category.includes("Transportation")) return "volcanoe";
+    else if (category.includes("Debt repayments")) return "MediumAquamarine";
+    else if (category.includes("Attire")) return "turquoise";
+    else if (category.includes("Fun stuff")) return "pink";
+    else if (category.includes("Personal")) return "DeepSkyBlue";
+    else if (category.includes("Personal business")) return "teal";
+    else if (category.includes("Health Care")) return "royalblue";
+    else if (category.includes("Insurance")) return "darkorange";
+    else if (category.includes("Education")) return "mediumaquamarine";
+    else if (category.includes("Children")) return "lawngreen";
+    else if (category.includes("Uncategorized")) return "maroon";
   };
   const [api, contextHolder] = notification.useNotification();
 
@@ -190,9 +193,11 @@ const EditableTable: React.FC = () => {
       title: "Category",
       dataIndex: "category",
       key: "category",
-      render: (_, record) => (
-        <Tag color={categoryColors(record.category)}>{record.category}</Tag>
-      ),
+      render: (_, record) => {
+        const returnstr = `${record.category[0]} / ${record.category[1]}`;
+        console.error("return str " + returnstr);
+        return <Tag color={categoryColors(returnstr)}>{returnstr}</Tag>;
+      },
       width: "25%",
       editable: true,
       inputType: "category",
