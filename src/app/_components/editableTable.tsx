@@ -102,9 +102,14 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   );
 };
 
-const EditableTable: React.FC = () => {
+function EditableTable({
+  transactionsList,
+  setTransactionsList,
+}: {
+  transactionsList: transaction[];
+  setTransactionsList: (transactions: transaction[]) => void;
+}) {
   const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
   const [editingKey, setEditingKey] = useState("");
 
   const isEditing = (record: transaction) => record.key === editingKey;
@@ -122,7 +127,7 @@ const EditableTable: React.FC = () => {
     try {
       const row = (await form.validateFields()) as transaction;
 
-      const newData = [...data];
+      const newData = [...transactionsList];
       const index = newData.findIndex((transaction) => key === transaction.key);
       if (index > -1) {
         const transaction = newData[index];
@@ -130,11 +135,11 @@ const EditableTable: React.FC = () => {
           ...transaction,
           ...row,
         });
-        setData(newData);
+        setTransactionsList(newData);
         setEditingKey("");
       } else {
         newData.push(row);
-        setData(newData);
+        setTransactionsList(newData);
         setEditingKey("");
       }
     } catch (errInfo) {
@@ -163,11 +168,11 @@ const EditableTable: React.FC = () => {
   const [api, contextHolder] = notification.useNotification();
 
   const handleDelete = (key: React.Key) => {
-    const deletedItemDescription = data.find(
+    const deletedItemDescription = transactionsList.find(
       (transaction) => transaction.key === key,
     )?.description;
-    const newData = data.filter((item) => item.key !== key);
-    setData(newData);
+    const newData = transactionsList.filter((item) => item.key !== key);
+    setTransactionsList(newData);
 
     if (!deletedItemDescription) {
       console.error("couldnt find deletedItemDescription");
@@ -217,9 +222,7 @@ const EditableTable: React.FC = () => {
       width: "11%",
       editable: true,
       inputType: "date",
-      render: (_, record) => (
-        <h1>{record.date.format("h:mma ddd DD/MM/YY")}</h1>
-      ),
+      render: (_, record) => <h1>{record.date.format("ddd DD/MM/YYYY")}</h1>,
     },
     {
       title: "operation",
@@ -289,7 +292,7 @@ const EditableTable: React.FC = () => {
             },
           }}
           bordered
-          dataSource={data}
+          dataSource={transactionsList}
           columns={mergedColumns}
           rowClassName="editable-row"
           pagination={{
@@ -299,6 +302,6 @@ const EditableTable: React.FC = () => {
       </Form>
     </>
   );
-};
+}
 
 export default EditableTable;

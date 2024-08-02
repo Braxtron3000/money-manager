@@ -19,6 +19,10 @@ import {
 } from "@ant-design/icons";
 import EditableTable from "../_components/editableTable";
 import Calendar from "../_components/Calendar";
+import Papa from "papaparse";
+import { transaction } from "~/types";
+import dayjs from "dayjs";
+import { randomUUID } from "crypto";
 
 export default function Page() {
   type SearchProps = GetProps<typeof Input.Search>;
@@ -27,9 +31,124 @@ export default function Page() {
 
   const [tableFormat, setTableFormat] = useState<"list" | "calendar">("list");
 
+  interface CSVTransaction {
+    Date: string;
+    Description: string;
+  }
+
+  interface DebitCSVTransaction extends CSVTransaction {
+    Withdrawals: string;
+    Deposits: string;
+    Category: string;
+    Balance: string;
+  }
+
+  // const som: DebitCSVTransaction = { Date: "02/15/2024" };
+
+  const isDebitCSVTransaction = (
+    transaction: CSVTransaction,
+  ): transaction is DebitCSVTransaction => {
+    return "Date" in transaction ||
+      "Description" in transaction ||
+      "Withdrawals" in transaction ||
+      "Deposits" in transaction ||
+      "Category" in transaction ||
+      "Balance" in transaction
+      ? true
+      : false;
+  };
+
+  interface CreditCSVTransaction extends CSVTransaction {
+    Amount: string;
+  }
+
+  const isCreditCSVTransaction = (
+    transaction: CSVTransaction,
+  ): transaction is CSVTransaction => {
+    return "Amount" in transaction ? true : false;
+  };
+
+  const convertCSVTransaction = (
+    csvTransaction: DebitCSVTransaction | CreditCSVTransaction,
+    index: number,
+  ): transaction => {
+    const date = dayjs(csvTransaction.Date);
+    const description = csvTransaction.Description;
+    const key = index.toString();
+
+    if (isDebitCSVTransaction(csvTransaction)) {
+      const amount =
+        +csvTransaction.Deposits.replaceAll("$", "") -
+        +csvTransaction.Withdrawals.replaceAll("$", "");
+      console.log("amount " + amount);
+
+      return {
+        date,
+        category: "Food / restaurants",
+        description,
+        key,
+        pricing: amount,
+      };
+    } else {
+      return {
+        category: "Food / restaurants",
+        description,
+        date,
+        key,
+        pricing: +csvTransaction.Amount.replaceAll("$", ""),
+      };
+    }
+  };
+
+  const processParsedCSVFile = (
+    transactions: (DebitCSVTransaction | CreditCSVTransaction)[],
+  ): transaction[] => {
+    if (transactions.at(0) && transactions[0]) {
+      return transactions.map(convertCSVTransaction);
+    } else return [];
+  };
+
+  const [transactions, setTransactions] = useState<transaction[]>([]);
+
   const props: UploadProps = {
+    beforeUpload(file) {
+      // Papa.parse(file, {});
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        //! do not allow console printing here.
+        if (e.target?.result?.toString) {
+          console.log("parsing the baby");
+          try {
+            const som = Papa.parse<DebitCSVTransaction | CreditCSVTransaction>(
+              e.target?.result?.toString(),
+              { header: true },
+            );
+
+            console.log("da babay is here: ", som);
+
+            if (som.data.length > 0) {
+              const processedCSVFiles = processParsedCSVFile(som.data);
+              setTransactions(processedCSVFiles);
+            }
+          } catch (error) {
+            console.error("lol psych \n" + error);
+          }
+        }
+      };
+
+      reader.readAsText(file);
+
+      //  reader.onlo
+
+      // Papa.parse(reader.result?.toString());
+    },
     onChange(info) {
-      if (info.file.status !== "uploading") {
+      /*       const regex = new RegExp("(.*?).(csv)$");
+      if (!regex.test(info.file.name)) {
+        message.error(`${info.file.name} is not a csv file`);
+      }
+ */ if (info.file.status !== "uploading") {
         console.log(info.file, info.fileList);
       }
       if (info.file.status === "done") {
@@ -39,6 +158,7 @@ export default function Page() {
       }
     },
     showUploadList: false,
+    accept: ".csv",
   };
 
   return (
@@ -67,7 +187,14 @@ export default function Page() {
           />
         </div>
       </div>
-      {tableFormat === "list" ? <EditableTable /> : <Calendar />}{" "}
+      {tableFormat === "list" ? (
+        <EditableTable
+          transactionsList={transactions}
+          setTransactionsList={setTransactions}
+        />
+      ) : (
+        <Calendar />
+      )}
     </SideBarHeaderLayout>
   );
 }
