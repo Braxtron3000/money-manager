@@ -165,12 +165,12 @@ export default function Page() {
     <SideBarHeaderLayout title="Transactions">
       <div className="row-span-5 flex justify-between">
         <div className="row-span-5 my-4 flex w-4/12 gap-4 ">
-          <Input.Search
+          {/*   <Input.Search
             placeholder="input search text"
             onSearch={onSearch}
             className="w-80"
-          />
-          <Button icon={<FilterOutlined />}>Filter</Button>
+          /> */}
+          {/* <Button icon={<FilterOutlined />}>Filter</Button> */}
         </div>
         <div className="row-span-5 my-4 flex w-4/12 justify-center">
           <Upload {...props}>
@@ -178,13 +178,13 @@ export default function Page() {
           </Upload>
         </div>
         <div className="row-span-5 my-4 flex w-4/12 justify-end">
-          <Segmented
+          {/*  <Segmented
             onChange={setTableFormat}
             options={[
               { value: "list", icon: <BarsOutlined /> },
               { value: "calendar", icon: <CalendarOutlined /> },
             ]}
-          />
+          /> */}
         </div>
       </div>
       {tableFormat === "list" ? (
