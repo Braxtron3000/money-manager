@@ -78,8 +78,8 @@ export default function Page() {
 
     if (isDebitCSVTransaction(csvTransaction)) {
       const amount =
-        +csvTransaction.Deposits.replaceAll("$", "") -
-        +csvTransaction.Withdrawals.replaceAll("$", "");
+        +csvTransaction.Deposits.replaceAll("$", "").replaceAll(",", "") -
+        +csvTransaction.Withdrawals.replaceAll("$", "").replaceAll(",", "");
       console.log("amount " + amount);
 
       return {
@@ -95,7 +95,7 @@ export default function Page() {
         description,
         date,
         key,
-        pricing: +csvTransaction.Amount.replaceAll("$", ""),
+        pricing: +csvTransaction.Amount.replaceAll("$", "").replaceAll(",", ""),
       };
     }
   };
