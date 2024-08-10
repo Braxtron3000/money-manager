@@ -300,7 +300,7 @@ export const categoryTree: CategoryNode[] = [
 ];
 
 export type transaction = {
-  key: string; //id
+  id: string; //id
   description: string;
   category: categories;
   pricing: number;

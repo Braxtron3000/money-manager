@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import type { CascaderProps, NotificationArgsProps, TableProps } from "antd";
 import {
@@ -19,11 +20,11 @@ import { ColumnsType } from "antd/es/table";
 const originData: transaction[] = [];
 for (let i = 0; i < 1; i++) {
   originData.push({
-    key: i.toString(),
+    id: i.toString(),
     description: `Edward ${i}`,
     pricing: 32,
     date: dayjs(),
-    category: "Taxes:Federal",
+    category: "Taxes / Federal",
   });
 }
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -112,11 +113,11 @@ function EditableTable({
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
 
-  const isEditing = (record: transaction) => record.key === editingKey;
+  const isEditing = (record: transaction) => record.id === editingKey;
 
   const edit = (record: Partial<transaction> & { key: React.Key }) => {
     form.setFieldsValue({ name: "", age: "", address: "", ...record });
-    setEditingKey(record.key);
+    setEditingKey(record.id);
   };
 
   const cancel = () => {
@@ -128,7 +129,7 @@ function EditableTable({
       const row = (await form.validateFields()) as transaction;
 
       const newData = [...transactionsList];
-      const index = newData.findIndex((transaction) => key === transaction.key);
+      const index = newData.findIndex((transaction) => key === transaction.id);
       if (index > -1) {
         const transaction = newData[index];
         newData.splice(index, 1, {
@@ -169,9 +170,9 @@ function EditableTable({
 
   const handleDelete = (key: React.Key) => {
     const deletedItemDescription = transactionsList.find(
-      (transaction) => transaction.key === key,
+      (transaction) => transaction.id === key,
     )?.description;
-    const newData = transactionsList.filter((item) => item.key !== key);
+    const newData = transactionsList.filter((item) => item.id !== key);
     setTransactionsList(newData);
 
     if (!deletedItemDescription) {
@@ -222,7 +223,7 @@ function EditableTable({
       width: "11%",
       editable: true,
       inputType: "date",
-      render: (_, record) => <h1>{record.date.format("ddd DD/MM/YYYY")}</h1>,
+      render: (_, record) => <h1>{record.date.format("ddd MM/DD/YY")}</h1>,
     },
     {
       title: "operation",
@@ -233,7 +234,7 @@ function EditableTable({
         return editable ? (
           <span>
             <Typography.Link
-              onClick={() => save(record.key)}
+              onClick={() => save(record.id)}
               style={{ marginRight: 8 }}
             >
               Save
@@ -246,7 +247,7 @@ function EditableTable({
           <span>
             <Popconfirm
               title="Sure to delete?"
-              onConfirm={() => handleDelete(record.key)}
+              onConfirm={() => handleDelete(record.id)}
             >
               <Typography.Link disabled={editingKey !== ""}>
                 Delete
