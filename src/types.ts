@@ -305,4 +305,5 @@ export type transaction = {
   category: categories;
   pricing: number;
   date: Dayjs;
+  createdById?: string;
 };

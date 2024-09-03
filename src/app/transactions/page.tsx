@@ -23,13 +23,20 @@ import Papa from "papaparse";
 import { transaction } from "~/types";
 import dayjs from "dayjs";
 import { randomUUID } from "crypto";
+import AddTransactionContainer from "../_components/AddTransactionContainer";
+// import { getServerAuthSession } from "~/server/auth";
+// import { api } from "~/trpc/server";
 
 export default function Page() {
+  // const hello = api.post.hello({ text: "from tRPC" });
+  // const session = getServerAuthSession();
+
   type SearchProps = GetProps<typeof Input.Search>;
   const onSearch: SearchProps["onSearch"] = (value, _e, info) =>
     console.log(info?.source, value);
 
-  const [tableFormat, setTableFormat] = useState<"list" | "calendar">("list");
+  // const [tableFormat, setTableFormat] = useState<"list" | "calendar">("list");
+  const tableFormat = "list";
 
   interface CSVTransaction {
     Date: string;
@@ -129,6 +136,7 @@ export default function Page() {
 
             if (som.data.length > 0) {
               const processedCSVFiles = processParsedCSVFile(som.data);
+              AddTransactionContainer(processedCSVFiles);
               setTransactions(processedCSVFiles);
             }
           } catch (error) {

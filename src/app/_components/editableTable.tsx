@@ -16,6 +16,8 @@ import {
 import { categories, categoryTree, transaction } from "~/types";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/es/table";
+// import { getServerAuthSession } from "~/server/auth";
+// import { api } from "~/trpc/server";
 
 const originData: transaction[] = [];
 for (let i = 0; i < 1; i++) {
@@ -113,6 +115,9 @@ function EditableTable({
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
 
+  // const hello = api.post.hello({ text: "from tRPC" });
+  // const session = getServerAuthSession();
+
   const isEditing = (record: transaction) => record.id === editingKey;
 
   const edit = (record: Partial<transaction> & { key: React.Key }) => {
@@ -166,7 +171,7 @@ function EditableTable({
     else if (category.includes("Children")) return "lawngreen";
     else if (category.includes("Uncategorized")) return "maroon";
   };
-  const [api, contextHolder] = notification.useNotification();
+  const [notiicationApi, contextHolder] = notification.useNotification();
 
   const handleDelete = (key: React.Key) => {
     const deletedItemDescription = transactionsList.find(
@@ -178,7 +183,7 @@ function EditableTable({
     if (!deletedItemDescription) {
       console.error("couldnt find deletedItemDescription");
     } else {
-      api.info({
+      notiicationApi.info({
         message: "deleted " + deletedItemDescription,
         placement: "bottom",
         duration: 2,

@@ -51,7 +51,7 @@ function SideBarHeaderLayout({
                 key: "1",
                 icon: <TableOutlined />,
                 label: "Transactions",
-                onClick: () => router.replace("/transactions"),
+                onClick: () => router.replace("/transations"),
               },
             ]}
           />

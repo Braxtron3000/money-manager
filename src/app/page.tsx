@@ -4,6 +4,7 @@ import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 import SideBarHeaderLayout from "./_components/SidebarHeaderLayout";
 import { CreatePost } from "./_components/Create-post";
+import { useEffect } from "react";
 
 export default async function Home() {
   const hello = await api.post.hello({ text: "from tRPC" });
