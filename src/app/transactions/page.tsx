@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SideBarHeaderLayout from "../_components/SidebarHeaderLayout";
 import {
   Button,
@@ -23,7 +23,9 @@ import Papa from "papaparse";
 import { transaction } from "~/types";
 import dayjs from "dayjs";
 import { randomUUID } from "crypto";
-import AddTransactionContainer from "../_components/AddTransactionContainer";
+import AddTransactionContainer, {
+  getTransactions,
+} from "../_components/AddTransactionContainer";
 // import { getServerAuthSession } from "~/server/auth";
 // import { api } from "~/trpc/server";
 
@@ -116,6 +118,10 @@ export default function Page() {
   };
 
   const [transactions, setTransactions] = useState<transaction[]>([]);
+
+  useEffect(() => {
+    getTransactions().then(setTransactions);
+  }, []);
 
   const props: UploadProps = {
     beforeUpload(file) {

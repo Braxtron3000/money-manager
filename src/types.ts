@@ -131,6 +131,10 @@ export const categoriesList: categories[] = [
   "Uncategorized",
 ] as const;
 
+export function isCategory(string: string): string is categories {
+  return categoriesList.findIndex((category) => category === string) > -1;
+}
+
 interface CategoryNode {
   value: string;
   label: string;

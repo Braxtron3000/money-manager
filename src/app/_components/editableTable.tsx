@@ -228,7 +228,9 @@ function EditableTable({
       width: "11%",
       editable: true,
       inputType: "date",
-      render: (_, record) => <h1>{record.date.format("ddd MM/DD/YY")}</h1>,
+      render: (_, record) => (
+        <h1>{/* record.date.format("ddd MM/DD/YY") */ "yo mama"}</h1>
+      ),
     },
     {
       title: "operation",
