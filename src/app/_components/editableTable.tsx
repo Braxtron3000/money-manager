@@ -307,7 +307,7 @@ function EditableTable({
           }}
           bordered
           dataSource={transactionsList}
-          // idk theres some funkiness with typescript.
+          //@ts-ignore idk theres some funkiness with typescript.
           columns={mergedColumns}
           rowClassName="editable-row"
           pagination={{
