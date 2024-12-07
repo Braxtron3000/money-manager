@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import type { CascaderProps, NotificationArgsProps, TableProps } from "antd";
+import type { CascaderProps } from "antd";
 import {
   Cascader,
   DatePicker,
@@ -13,11 +13,10 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { categories, categoryTree, transaction } from "~/types";
+import { categoryTree, transaction } from "~/types";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/es/table";
-// import { getServerAuthSession } from "~/server/auth";
-// import { api } from "~/trpc/server";
+import { deleteTransactions } from "../actions/transactionActions";
 
 const originData: transaction[] = [];
 for (let i = 0; i < 1; i++) {
@@ -107,12 +106,10 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
 function EditableTable({
   transactionsList,
-  // setTransactionsList,
 }: {
   transactionsList: transaction[];
-  // setTransactionsList: (transactions: transaction[]) => void;
 }) {
-  const setTransactionsList = (transactions: transaction[]) => {}; //! fix this later
+  // const setTransactionsList = (transactions: transaction[]) => {}; //! fix this later
 
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
@@ -144,11 +141,11 @@ function EditableTable({
           ...transaction,
           ...row,
         });
-        setTransactionsList(newData);
+        // setTransactionsList(newData);
         setEditingKey("");
       } else {
         newData.push(row);
-        setTransactionsList(newData);
+        // setTransactionsList(newData);
         setEditingKey("");
       }
     } catch (errInfo) {
@@ -180,9 +177,9 @@ function EditableTable({
     const deletedItemDescription = transactionsList.find(
       (transaction) => transaction.id === key,
     )?.description;
-    const newData = transactionsList.filter((item) => item.id !== key);
-    setTransactionsList(newData);
-
+    // const newData = transactionsList.filter((item) => item.id !== key);
+    //settransactionslist(newData);
+    deleteTransactions([key.toString()]);
     if (!deletedItemDescription) {
       console.error("couldnt find deletedItemDescription");
     } else {
@@ -194,9 +191,13 @@ function EditableTable({
     }
   };
 
-  const columns: ColumnsType<transaction & { editable: boolean }> = [
+  const columns: (ColumnsType<transaction>[number] & {
+    editable?: boolean;
+    inputType?: string;
+  })[] = [
     {
       title: "Description",
+      // dataIndex: "description",
       dataIndex: "description",
       key: "description",
       width: "40%",
@@ -226,6 +227,7 @@ function EditableTable({
     },
     {
       title: "Date",
+      // dataIndex: "date",
       dataIndex: "date",
       key: "date",
       width: "11%",
@@ -266,7 +268,7 @@ function EditableTable({
             {"\t"}
             <Typography.Link
               disabled={editingKey !== ""}
-              onClick={() => edit(record)}
+              onClick={() => edit({ ...record, key: record.id })}
             >
               Edit
             </Typography.Link>
@@ -280,12 +282,13 @@ function EditableTable({
     if (!col.editable) {
       return col;
     }
+
     return {
       ...col,
       onCell: (record: transaction) => ({
         record,
         inputType: col.inputType,
-        dataIndex: col.dataIndex,
+        dataIndex: "dataIndex" in col ? col.dataIndex : undefined,
         title: col.title,
         editing: isEditing(record),
       }),
@@ -304,6 +307,7 @@ function EditableTable({
           }}
           bordered
           dataSource={transactionsList}
+          // idk theres some funkiness with typescript.
           columns={mergedColumns}
           rowClassName="editable-row"
           pagination={{

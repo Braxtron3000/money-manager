@@ -3,6 +3,9 @@ import React from "react";
 import { Button, GetProps, Input, message, Upload, UploadProps } from "antd";
 import { FilterOutlined, PlusOutlined } from "@ant-design/icons";
 import Papa from "papaparse";
+import { transaction } from "~/types";
+import dayjs from "dayjs";
+import { AddTransactionContainer } from "~/app/actions/transactionActions";
 
 interface CSVTransaction {
   Date: string;
@@ -39,6 +42,46 @@ const isCreditCSVTransaction = (
   return "Amount" in transaction ? true : false;
 };
 
+const convertCSVTransaction = (
+  csvTransaction: DebitCSVTransaction | CreditCSVTransaction,
+  index: number,
+): transaction => {
+  const date = dayjs(csvTransaction.Date);
+  const description = csvTransaction.Description;
+  const key = index.toString();
+
+  if (isDebitCSVTransaction(csvTransaction)) {
+    const amount =
+      +csvTransaction.Deposits.replaceAll("$", "").replaceAll(",", "") -
+      +csvTransaction.Withdrawals.replaceAll("$", "").replaceAll(",", "");
+    console.log("amount " + amount);
+
+    return {
+      date,
+      category: "Food / restaurants",
+      description,
+      id: key,
+      pricing: amount,
+    };
+  } else {
+    return {
+      category: "Food / restaurants",
+      description,
+      date,
+      id: key,
+      pricing: +csvTransaction.Amount.replaceAll("$", "").replaceAll(",", ""),
+    };
+  }
+};
+
+const processParsedCSVFile = (
+  transactions: (DebitCSVTransaction | CreditCSVTransaction)[],
+): transaction[] => {
+  if (transactions.at(0) && transactions[0]) {
+    return transactions.map(convertCSVTransaction);
+  } else return [];
+};
+
 function SearchInputs() {
   const props: UploadProps = {
     beforeUpload(file) {
@@ -59,8 +102,8 @@ function SearchInputs() {
 
             if (som.data.length > 0) {
               //!Todo: add these back in
-              //    const processedCSVFiles = processParsedCSVFile(som.data);
-              //!   AddTransactionContainer(processedCSVFiles);
+              const processedCSVFiles = processParsedCSVFile(som.data);
+              AddTransactionContainer(processedCSVFiles);
               //!   setTransactions(processedCSVFiles);
             }
           } catch (error) {
@@ -70,8 +113,6 @@ function SearchInputs() {
       };
 
       reader.readAsText(file);
-
-      //  reader.onlo
 
       // Papa.parse(reader.result?.toString());
     },
