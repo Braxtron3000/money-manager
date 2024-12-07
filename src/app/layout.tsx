@@ -1,5 +1,7 @@
 import "~/styles/globals.css";
 
+//never used
+
 import { GeistSans } from "geist/font/sans";
 
 import { TRPCReactProvider } from "~/trpc/react";
@@ -12,11 +14,7 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/money.svg" }],
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
       <TRPCReactProvider>
@@ -25,3 +23,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+export default RootLayout;

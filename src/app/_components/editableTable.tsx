@@ -107,11 +107,13 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
 function EditableTable({
   transactionsList,
-  setTransactionsList,
+  // setTransactionsList,
 }: {
   transactionsList: transaction[];
-  setTransactionsList: (transactions: transaction[]) => void;
+  // setTransactionsList: (transactions: transaction[]) => void;
 }) {
+  const setTransactionsList = (transactions: transaction[]) => {}; //! fix this later
+
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
 
@@ -122,7 +124,8 @@ function EditableTable({
 
   const edit = (record: Partial<transaction> & { key: React.Key }) => {
     form.setFieldsValue({ name: "", age: "", address: "", ...record });
-    setEditingKey(record.id);
+    if (record.id) setEditingKey(record.id);
+    else console.error("there is no record id");
   };
 
   const cancel = () => {

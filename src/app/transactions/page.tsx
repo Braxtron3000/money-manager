@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import React, { useEffect, useState } from "react";
 import SideBarHeaderLayout from "../_components/SidebarHeaderLayout";
 import {
@@ -29,7 +29,7 @@ import AddTransactionContainer, {
 // import { getServerAuthSession } from "~/server/auth";
 // import { api } from "~/trpc/server";
 
-export default function Page() {
+export default async function Page() {
   // const hello = api.post.hello({ text: "from tRPC" });
   // const session = getServerAuthSession();
 
@@ -117,95 +117,14 @@ export default function Page() {
     } else return [];
   };
 
-  const [transactions, setTransactions] = useState<transaction[]>([]);
+  // const [transactions, setTransactions] = useState<transaction[]>([]);
 
-  useEffect(() => {
-    getTransactions().then(setTransactions);
-  }, []);
-
-  const props: UploadProps = {
-    beforeUpload(file) {
-      // Papa.parse(file, {});
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        //! do not allow console printing here.
-        if (e.target?.result?.toString) {
-          console.log("parsing the baby");
-          try {
-            const som = Papa.parse<DebitCSVTransaction | CreditCSVTransaction>(
-              e.target?.result?.toString(),
-              { header: true },
-            );
-
-            console.log("da babay is here: ", som);
-
-            if (som.data.length > 0) {
-              const processedCSVFiles = processParsedCSVFile(som.data);
-              AddTransactionContainer(processedCSVFiles);
-              setTransactions(processedCSVFiles);
-            }
-          } catch (error) {
-            console.error("lol psych \n" + error);
-          }
-        }
-      };
-
-      reader.readAsText(file);
-
-      //  reader.onlo
-
-      // Papa.parse(reader.result?.toString());
-    },
-    onChange(info) {
-      /*       const regex = new RegExp("(.*?).(csv)$");
-      if (!regex.test(info.file.name)) {
-        message.error(`${info.file.name} is not a csv file`);
-      }
- */ if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-    showUploadList: false,
-    accept: ".csv",
-  };
+  const transactions = await getTransactions();
 
   return (
     <SideBarHeaderLayout title="Transactions">
-      <div className="row-span-5 flex justify-between">
-        <div className="row-span-5 my-4 flex w-4/12 gap-4 ">
-          {/*   <Input.Search
-            placeholder="input search text"
-            onSearch={onSearch}
-            className="w-80"
-          /> */}
-          {/* <Button icon={<FilterOutlined />}>Filter</Button> */}
-        </div>
-        <div className="row-span-5 my-4 flex w-4/12 justify-center">
-          <Upload {...props}>
-            <Button icon={<PlusOutlined />}>Add Transactions </Button>
-          </Upload>
-        </div>
-        <div className="row-span-5 my-4 flex w-4/12 justify-end">
-          {/*  <Segmented
-            onChange={setTableFormat}
-            options={[
-              { value: "list", icon: <BarsOutlined /> },
-              { value: "calendar", icon: <CalendarOutlined /> },
-            ]}
-          /> */}
-        </div>
-      </div>
       {tableFormat === "list" ? (
-        <EditableTable
-          transactionsList={transactions}
-          setTransactionsList={setTransactions}
-        />
+        <EditableTable transactionsList={transactions} />
       ) : (
         <Calendar />
       )}

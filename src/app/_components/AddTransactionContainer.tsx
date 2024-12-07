@@ -11,28 +11,19 @@ export default async function AddTransactionContainer(
 ) {
   const session = await getServerAuthSession();
 
-  const allstuff = await api.transactions.getTransactions({
-    userId: session?.user.id ?? "",
-  });
+  // const allstuff = await api.transactions.getTransactions({
+  //   userId: session?.user.id ?? "",
+  // });
 
   const yash = api.transactions.createTransactions;
 
-  const dostuff = () => {
-    console.log("im doing it");
-    yash(
-      transactions.map((transaction) => ({
-        ...transaction,
-        createdById: session?.user.id ?? "",
-        date: new Date(transaction.date.valueOf()),
-      })),
-    );
-
-    console.log("i did it");
-  };
-
-  const som = dostuff();
-
-  return som;
+  yash(
+    transactions.map((transaction) => ({
+      ...transaction,
+      createdById: session?.user.id ?? "",
+      date: new Date(transaction.date.valueOf()),
+    })),
+  );
 }
 
 export async function getTransactions(): Promise<transaction[]> {
