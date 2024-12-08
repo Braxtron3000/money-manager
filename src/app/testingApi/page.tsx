@@ -1,7 +1,7 @@
 import { getServerAuthSession } from "~/server/auth";
 import SideBarHeaderLayout from "../_components/SidebarHeaderLayout";
 import { api } from "~/trpc/server";
-import AddTransactionContainer from "../_components/AddTransactionContainer";
+import AddTransactionContainer from "../actions/transactionActions";
 import InputNewTransaction from "../_components/AddTransactionComponent";
 
 export default async function TestingAPI() {

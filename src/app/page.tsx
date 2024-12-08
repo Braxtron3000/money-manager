@@ -11,7 +11,7 @@ export default async function Home() {
   const session = await getServerAuthSession();
 
   return (
-    <SideBarHeaderLayout title="Dashboard">
+    <SideBarHeaderLayout title="Dashboard" showHeader>
       <main className="flex min-h-screen flex-grow flex-col items-center justify-center bg-gradient-to-b from-[#4FB0C6] to-[#4F86C6] text-white">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
           <div className="flex flex-col items-center gap-2">

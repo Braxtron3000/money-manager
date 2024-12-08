@@ -1,3 +1,4 @@
+import { deleteTransactions } from "~/app/actions/transactionActions";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
 
@@ -30,4 +31,25 @@ export const transactionsRouter = createTRPCRouter({
         },
       }),
     ),
+  deleteTransactions: protectedProcedure
+    .input(
+      z // .object({
+        //   id: z.string(),
+        // description: z.string(),
+        // category: z.string(),
+        // pricing: z.number(),
+        // date: z.date(),
+        // createdById: z.string(),
+        // })
+        .string()
+        .array(),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.transaction.deleteMany({
+        where: {
+          // id: { in: input.map(({ id }) => id) },
+          id: { in: input },
+        },
+      });
+    }),
 });

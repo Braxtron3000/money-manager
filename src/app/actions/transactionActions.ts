@@ -1,38 +1,25 @@
 "use server";
 import { api } from "~/trpc/server";
 import { getServerAuthSession } from "~/server/auth";
-import InputNewTransaction from "./AddTransactionComponent";
-import { randomUUID } from "crypto";
 import { isCategory, transaction } from "~/types";
 import dayjs from "dayjs";
 
-export default async function AddTransactionContainer(
-  transactions: transaction[],
-) {
-  const session = await getServerAuthSession();
+export async function AddTransactionContainer(transactions: transaction[]) {
+  "use server";
+  try {
+    console.log("adding transactions to db");
+    const session = await getServerAuthSession(); //!Todo: whats going on here.
 
-  const allstuff = await api.transactions.getTransactions({
-    userId: session?.user.id ?? "",
-  });
-
-  const yash = api.transactions.createTransactions;
-
-  const dostuff = () => {
-    console.log("im doing it");
-    yash(
+    api.transactions.createTransactions(
       transactions.map((transaction) => ({
         ...transaction,
         createdById: session?.user.id ?? "",
         date: new Date(transaction.date.valueOf()),
       })),
     );
-
-    console.log("i did it");
-  };
-
-  const som = dostuff();
-
-  return som;
+  } catch (error) {
+    console.error("problem adding Transactions to db ", error);
+  }
 }
 
 export async function getTransactions(): Promise<transaction[]> {
@@ -50,4 +37,15 @@ export async function getTransactions(): Promise<transaction[]> {
   );
 
   return transactions;
+}
+
+export async function deleteTransactions(transactionIds: string[]) {
+  "use server";
+
+  try {
+    api.transactions.deleteTransactions(transactionIds);
+    console.log("deleting transactions ", transactionIds);
+  } catch (error) {
+    console.error("error deleting transactions: ", error);
+  }
 }
