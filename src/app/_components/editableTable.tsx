@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { CascaderProps } from "antd";
 import {
   Cascader,
@@ -13,7 +13,7 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { categoryTree, transaction } from "~/types";
+import { categoryTree, isCategory, transaction } from "~/types";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/es/table";
 import { deleteTransactions } from "../actions/transactionActions";
@@ -109,18 +109,20 @@ function EditableTable({
 }: {
   transactionsList: transaction[];
 }) {
-  // const setTransactionsList = (transactions: transaction[]) => {}; //! fix this later
-
   const [form] = Form.useForm();
-  const [editingKey, setEditingKey] = useState("");
 
-  // const hello = api.post.hello({ text: "from tRPC" });
-  // const session = getServerAuthSession();
+  const [editingKey, setEditingKey] = useState("");
 
   const isEditing = (record: transaction) => record.id === editingKey;
 
   const edit = (record: Partial<transaction> & { key: React.Key }) => {
-    form.setFieldsValue({ name: "", age: "", address: "", ...record });
+    try {
+      form.setFieldsValue({ ...record });
+      console.log("typeof date " + typeof record.date);
+    } catch (error) {
+      console.error("error editing ", error);
+    }
+
     if (record.id) setEditingKey(record.id);
     else console.error("there is no record id");
   };
@@ -141,11 +143,9 @@ function EditableTable({
           ...transaction,
           ...row,
         });
-        // setTransactionsList(newData);
         setEditingKey("");
       } else {
         newData.push(row);
-        // setTransactionsList(newData);
         setEditingKey("");
       }
     } catch (errInfo) {
@@ -177,8 +177,6 @@ function EditableTable({
     const deletedItemDescription = transactionsList.find(
       (transaction) => transaction.id === key,
     )?.description;
-    // const newData = transactionsList.filter((item) => item.id !== key);
-    //settransactionslist(newData);
     deleteTransactions([key.toString()]);
     if (!deletedItemDescription) {
       console.error("couldnt find deletedItemDescription");
@@ -197,7 +195,6 @@ function EditableTable({
   })[] = [
     {
       title: "Description",
-      // dataIndex: "description",
       dataIndex: "description",
       key: "description",
       width: "40%",
@@ -209,9 +206,9 @@ function EditableTable({
       dataIndex: "category",
       key: "category",
       render: (_, record) => {
-        const returnstr = `${record.category[0]} / ${record.category[1]}`;
-        console.error("return str " + returnstr);
-        return <Tag color={categoryColors(returnstr)}>{returnstr}</Tag>;
+        return (
+          <Tag color={categoryColors(record.category)}>{record.category}</Tag>
+        );
       },
       width: "25%",
       editable: true,
@@ -221,20 +218,19 @@ function EditableTable({
       title: "Pricing",
       dataIndex: "pricing",
       key: "pricing",
-      width: "7.5%",
+      width: "7%",
       editable: true,
       inputType: "number",
     },
     {
       title: "Date",
-      // dataIndex: "date",
       dataIndex: "date",
       key: "date",
       width: "11%",
       editable: true,
       inputType: "date",
       render: (_, record) => (
-        <h1>{/* record.date.format("ddd MM/DD/YY") */ "yo mama"}</h1>
+        <h1>{dayjs(record.date.toString()).format("MM/DD/YYYY")}</h1>
       ),
     },
     {
@@ -268,7 +264,11 @@ function EditableTable({
             {"\t"}
             <Typography.Link
               disabled={editingKey !== ""}
-              onClick={() => edit({ ...record, key: record.id })}
+              onClick={() => {
+                console.log("type of " + record.date);
+
+                edit({ ...record, key: record.id });
+              }}
             >
               Edit
             </Typography.Link>
@@ -282,6 +282,11 @@ function EditableTable({
     if (!col.editable) {
       return col;
     }
+
+    console.error("merged columns ", {
+      dataIndex: "dataIndex" in col ? col.dataIndex : undefined,
+      inputType: col.inputType,
+    });
 
     return {
       ...col,
@@ -306,7 +311,10 @@ function EditableTable({
             },
           }}
           bordered
-          dataSource={transactionsList}
+          dataSource={transactionsList.map((transaction) => ({
+            ...transaction,
+            date: dayjs(transaction.date), //! for some reason transaction.date is a string in runtime even though thats not its type.
+          }))}
           //@ts-ignore idk theres some funkiness with typescript.
           columns={mergedColumns}
           rowClassName="editable-row"
