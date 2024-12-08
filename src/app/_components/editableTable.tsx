@@ -234,7 +234,7 @@ function EditableTable({
       ),
     },
     {
-      title: "operation",
+      title: " ",
       dataIndex: "operation",
       width: "11%",
       render: (_: any, record: transaction) => {

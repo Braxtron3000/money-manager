@@ -306,7 +306,7 @@ export const categoryTree: CategoryNode[] = [
 export type transaction = {
   id: string; //id
   description: string;
-  category: categories;
+  category: string; //categories;
   pricing: number;
   date: Dayjs;
   createdById?: string;

@@ -3,7 +3,7 @@ import React from "react";
 import { Button, GetProps, Input, message, Upload, UploadProps } from "antd";
 import { FilterOutlined, PlusOutlined } from "@ant-design/icons";
 import Papa from "papaparse";
-import { transaction } from "~/types";
+import { categories, transaction } from "~/types";
 import dayjs from "dayjs";
 import { AddTransactionContainer } from "~/app/actions/transactionActions";
 
@@ -48,6 +48,10 @@ const convertCSVTransaction = (
 ): transaction => {
   const date = dayjs(csvTransaction.Date);
   const description = csvTransaction.Description;
+  const category = isDebitCSVTransaction(csvTransaction)
+    ? csvTransaction.Category
+    : "Debt repayments / credit cards/charge cards";
+
   const key = index.toString();
 
   if (isDebitCSVTransaction(csvTransaction)) {
@@ -58,14 +62,14 @@ const convertCSVTransaction = (
 
     return {
       date,
-      category: "Food / restaurants",
+      category,
       description,
       id: key,
       pricing: amount,
     };
   } else {
     return {
-      category: "Food / restaurants",
+      category,
       description,
       date,
       id: key,
