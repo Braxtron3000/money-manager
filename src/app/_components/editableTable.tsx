@@ -18,16 +18,6 @@ import dayjs from "dayjs";
 import { ColumnsType } from "antd/es/table";
 import { deleteTransactions } from "../actions/transactionActions";
 
-const originData: transaction[] = [];
-for (let i = 0; i < 1; i++) {
-  originData.push({
-    id: i.toString(),
-    description: `Edward ${i}`,
-    pricing: 32,
-    date: dayjs(),
-    category: "Taxes / Federal",
-  });
-}
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
