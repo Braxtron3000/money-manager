@@ -29,33 +29,37 @@ function SideBarHeaderLayout({
 
   const router = useRouter();
 
+  const navigationArrs = [
+    {
+      key: "0",
+      icon: <AreaChartOutlined />,
+      label: "Dashboard",
+      onClick: () => router.replace("/"),
+    },
+    {
+      key: "1",
+      icon: <TableOutlined />,
+      label: "Transactions",
+      onClick: () => router.replace("/transactions"),
+    },
+  ];
+
   return (
     <body className="flex min-h-screen flex-row">
       <Layout>
-        <Sider trigger={null} collapsible collapsed={collapsed} theme="light">
-          <div className="demo-logo-vertical" />
-          <Menu
-            mode="inline"
-            theme="light"
-            defaultSelectedKeys={
-              title ? [screenNames.indexOf(title) + ""] : undefined
-            }
-            items={[
-              {
-                key: "0",
-                icon: <AreaChartOutlined />,
-                label: "Dashboard",
-                onClick: () => router.replace("/"),
-              },
-              {
-                key: "1",
-                icon: <TableOutlined />,
-                label: "Transactions",
-                onClick: () => router.replace("/transactions"),
-              },
-            ]}
-          />
-        </Sider>
+        {!showHeader && (
+          <Sider trigger={null} collapsible collapsed={collapsed} theme="light">
+            <div className="demo-logo-vertical" />
+            <Menu
+              mode="inline"
+              theme="light"
+              defaultSelectedKeys={
+                title ? [screenNames.indexOf(title) + ""] : undefined
+              }
+              items={navigationArrs}
+            />
+          </Sider>
+        )}
         <Layout>
           {showHeader && (
             <Header
@@ -64,7 +68,7 @@ function SideBarHeaderLayout({
                 background: colorBgContainer,
               }}
             >
-              <Button
+              {/* <Button
                 type="text"
                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 onClick={() => setCollapsed(!collapsed)}
@@ -73,8 +77,18 @@ function SideBarHeaderLayout({
                   width: 64,
                   height: 64,
                 }}
-              />
-              {title}
+              /> */}
+
+              {navigationArrs.map((props) => (
+                <Button
+                  type={props.label == title ? "primary" : "text"}
+                  {...props}
+                >
+                  {props.label}
+                </Button>
+              ))}
+
+              {/* {title} */}
             </Header>
           )}
           <Content

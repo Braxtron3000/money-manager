@@ -11,7 +11,7 @@ export default async function Page() {
   const transactions = await getTransactions();
 
   return (
-    <SideBarHeaderLayout title="Transactions">
+    <SideBarHeaderLayout title="Transactions" showHeader>
       <SearchInputs />
       {tableFormat === "list" ? (
         <EditableTable transactionsList={transactions} />
