@@ -197,7 +197,7 @@ function EditableTable({
       title: "Description",
       dataIndex: "description",
       key: "description",
-      width: "40%",
+      // width: "40%",
       editable: true,
       inputType: "text",
     },
@@ -210,7 +210,7 @@ function EditableTable({
           <Tag color={categoryColors(record.category)}>{record.category}</Tag>
         );
       },
-      width: "25%",
+      // width: "25%",
       editable: true,
       inputType: "category",
     },
@@ -218,7 +218,7 @@ function EditableTable({
       title: "Pricing",
       dataIndex: "pricing",
       key: "pricing",
-      width: "7%",
+      // width: "3%",
       editable: true,
       inputType: "number",
     },
@@ -226,7 +226,7 @@ function EditableTable({
       title: "Date",
       dataIndex: "date",
       key: "date",
-      width: "11%",
+      // width: "11%",
       editable: true,
       inputType: "date",
       render: (_, record) => (
@@ -236,7 +236,7 @@ function EditableTable({
     {
       title: " ",
       dataIndex: "operation",
-      width: "11%",
+      // width: "11%",
       render: (_: any, record: transaction) => {
         const editable = isEditing(record);
         return editable ? (
