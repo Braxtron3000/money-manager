@@ -16,7 +16,9 @@ import {
 import { categoryTree, isCategory, transaction } from "~/types";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/es/table";
-import { deleteTransactions } from "../actions/transactionActions";
+import * as transactionActions from "../actions/transactionActions";
+import { api, RouterInputs, type ReactQueryOptions } from "~/trpc/react";
+import { describe } from "node:test";
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
@@ -99,7 +101,18 @@ function EditableTable({
 }: {
   transactionsList: transaction[];
 }) {
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<transaction>();
+
+  // type inputs = RouterInputs["transactions"]["getTransactions"];
+  // type options = ReactQueryOptions["transactions"]["getTransactions"];
+
+  // const getAllthatGrub = (input: inputs) =>
+  // api.transactions.getTransactions.useQuery(input);
+
+  // const transactionsList = getAllthatGrub();
+
+  const [transactionState, setTransactionState] =
+    useState<transaction[]>(transactionsList);
 
   const [editingKey, setEditingKey] = useState("");
 
@@ -117,27 +130,33 @@ function EditableTable({
     else console.error("there is no record id");
   };
 
-  const cancel = () => {
+  const cancelEditingKey = () => {
     setEditingKey("");
   };
 
-  const save = async (key: React.Key) => {
+  const save = async (key: transaction["id"]) => {
     try {
-      const row = (await form.validateFields()) as transaction;
+      let row = await form.validateFields(); //! Todo: if you stringify print this it looks like it actually sends a partial transaction.
 
-      const newData = [...transactionsList];
+      row = { ...row, category: row.category.toString() };
+
+      const newData = [...transactionState];
       const index = newData.findIndex((transaction) => key === transaction.id);
       if (index > -1) {
-        const transaction = newData[index];
+        const oldtransaction = newData[index];
         newData.splice(index, 1, {
-          ...transaction,
+          ...oldtransaction,
           ...row,
         });
         setEditingKey("");
       } else {
+        console.error("no index was found when updating");
         newData.push(row);
         setEditingKey("");
       }
+
+      transactionActions.editTransaction({ ...row, id: key });
+      setTransactionState(newData);
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
     }
@@ -164,10 +183,17 @@ function EditableTable({
   const [notiicationApi, contextHolder] = notification.useNotification();
 
   const handleDelete = (key: React.Key) => {
-    const deletedItemDescription = transactionsList.find(
+    const deletedItemDescription = transactionState.find(
       (transaction) => transaction.id === key,
     )?.description;
-    deleteTransactions([key.toString()]);
+    transactionActions.deleteTransactions([key.toString()]);
+
+    setTransactionState(
+      transactionState.filter(
+        (transaction) => transaction.id !== key.toString(),
+      ),
+    );
+
     if (!deletedItemDescription) {
       console.error("couldnt find deletedItemDescription");
     } else {
@@ -237,7 +263,7 @@ function EditableTable({
             >
               Save
             </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+            <Popconfirm title="Sure to cancel?" onConfirm={cancelEditingKey}>
               <a>Cancel</a>
             </Popconfirm>
           </span>
@@ -301,15 +327,17 @@ function EditableTable({
             },
           }}
           bordered
-          dataSource={transactionsList.map((transaction) => ({
+          dataSource={transactionState.map((transaction) => ({
             ...transaction,
             date: dayjs(transaction.date), //! for some reason transaction.date is a string in runtime even though thats not its type.
           }))}
           //@ts-ignore idk theres some funkiness with typescript.
           columns={mergedColumns}
-          rowClassName="editable-row"
+          fixedHeader
           pagination={{
-            onChange: cancel,
+            onChange: cancelEditingKey,
+            pageSize: 50,
+            // position: ["topCenter"],
           }}
         />
       </Form>

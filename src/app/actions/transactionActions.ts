@@ -32,7 +32,8 @@ export async function getTransactions(): Promise<transaction[]> {
     (item) => ({
       ...item,
       date: dayjs(item.date),
-      category: isCategory(item.category) ? item.category : "Uncategorized",
+      // category: isCategory(item.category) ? item.category : "Uncategorized",
+      category: item.category,
     }),
   );
 
@@ -47,5 +48,18 @@ export async function deleteTransactions(transactionIds: string[]) {
     console.log("deleting transactions ", transactionIds);
   } catch (error) {
     console.error("error deleting transactions: ", error);
+  }
+}
+
+export async function editTransaction(transaction: transaction) {
+  try {
+    console.log("updating transaction ", transaction);
+    api.transactions.editTransaction({
+      ...transaction,
+      date: new Date(transaction.date.valueOf()),
+      createdById: transaction.createdById ?? "", //! i need to solidify typing or we could end up with null createdbyids.
+    });
+  } catch (error) {
+    console.error("error updating transactions: ", error);
   }
 }

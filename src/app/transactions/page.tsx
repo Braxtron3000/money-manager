@@ -4,6 +4,7 @@ import EditableTable from "../_components/editableTable";
 import Calendar from "../_components/Calendar";
 import { getTransactions } from "../actions/transactionActions";
 import SearchInputs from "./components/TransactionsHeaderInputs";
+import { transaction } from "~/types";
 
 export default async function Page() {
   const tableFormat = "list";
