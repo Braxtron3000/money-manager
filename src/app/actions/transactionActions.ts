@@ -4,7 +4,7 @@ import { getServerAuthSession } from "~/server/auth";
 import { isCategory, transaction } from "~/types";
 import dayjs from "dayjs";
 
-export async function AddTransactionContainer(transactions: transaction[]) {
+export async function addTransactions(transactions: transaction[]) {
   "use server";
   try {
     console.log("adding transactions to db");

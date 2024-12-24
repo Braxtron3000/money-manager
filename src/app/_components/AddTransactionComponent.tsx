@@ -1,10 +1,10 @@
 "use client";
 
-import { AddTransactionContainer } from "../actions/transactionActions";
+import { addTransactions } from "../actions/transactionActions";
 
 export default async function InputNewTransaction() {
   const dostuff = () => {
-    AddTransactionContainer([]);
+    addTransactions([]);
   };
 
   return (

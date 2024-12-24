@@ -311,3 +311,19 @@ export type transaction = {
   date: Dayjs;
   createdById?: string;
 };
+
+export interface CSVTransaction {
+  Date: string;
+  Description: string;
+}
+
+export interface DebitCSVTransaction extends CSVTransaction {
+  Withdrawals: string;
+  Deposits: string;
+  Category: string;
+  Balance: string;
+}
+
+export interface CreditCSVTransaction extends CSVTransaction {
+  Amount: string;
+}

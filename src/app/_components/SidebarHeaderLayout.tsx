@@ -79,10 +79,11 @@ function SideBarHeaderLayout({
                 }}
               /> */}
 
-              {navigationArrs.map((props) => (
+              {navigationArrs.map((props, index) => (
                 <Button
-                  type={props.label == title ? "primary" : "text"}
                   {...props}
+                  key={index}
+                  type={props.label == title ? "primary" : "text"}
                 >
                   {props.label}
                 </Button>
