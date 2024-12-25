@@ -64,7 +64,9 @@ export type categories =
   | "Children / activities"
   | "Children / child support"
   | "Children / charitable donations"
-  | "Uncategorized";
+  | "Uncategorized"
+  | "Income"; //Todo: income needs sub incomes such as from investments and gifts.
+//Todo: also add in investment expenses
 
 export const categoriesList: categories[] = [
   "Taxes / FICA (social security & medicare)",
@@ -130,6 +132,7 @@ export const categoriesList: categories[] = [
   "Children / child support",
   "Children / charitable donations",
   "Uncategorized",
+  "Income",
 ] as const;
 
 export function isCategory(string: string): string is categories {
@@ -302,6 +305,7 @@ export const categoryTree: CategoryNode[] = [
     ],
   },
   { value: "Uncategorized", label: "Uncategorized" },
+  { value: "Income", label: "Income" }, //Todo: Income should have children.
 ];
 
 export type transaction = {

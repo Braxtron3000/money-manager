@@ -79,4 +79,14 @@ export const transactionsRouter = createTRPCRouter({
         data: rest,
       });
     }),
+  getMonthCategorySummary: protectedProcedure
+    .input(z.number())
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.transaction.groupBy({
+        by: ["category"],
+        _sum: {
+          pricing: true,
+        },
+      });
+    }),
 });

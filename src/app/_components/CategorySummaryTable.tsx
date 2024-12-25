@@ -1,11 +1,25 @@
 "use client";
+import { Prisma } from "@prisma/client";
 import { Table } from "antd";
 import type { TableColumnsType } from "antd";
 
 import React, { useState } from "react";
 import { categoryTree } from "~/types";
 
-const CategorySummaryTable = () => {
+const CategorySummaryTable = ({
+  data,
+}: {
+  data:
+    | (Prisma.PickEnumerable<
+        Prisma.TransactionGroupByOutputType,
+        "category"[]
+      > & {
+        _sum: {
+          pricing: number | null;
+        };
+      })[]
+    | undefined;
+}) => {
   const [expandedRowKeys, setExpandedRowsKeys] = useState<React.Key[]>([]);
 
   interface DataType {
@@ -25,6 +39,13 @@ const CategorySummaryTable = () => {
     })),
   }));
 
+  const dataSource2: DataType[] =
+    data?.map((bah, index) => ({
+      key: index,
+      name: bah.category,
+      total: bah._sum.pricing ?? 0,
+    })) ?? [];
+
   const columnsFromGuide: TableColumnsType<DataType> = [
     {
       title: "Name",
@@ -40,7 +61,7 @@ const CategorySummaryTable = () => {
 
   return (
     <Table
-      dataSource={dataSource}
+      dataSource={dataSource2}
       columns={columnsFromGuide}
       pagination={false}
       expandable={{

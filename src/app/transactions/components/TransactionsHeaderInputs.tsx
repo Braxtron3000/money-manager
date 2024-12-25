@@ -5,7 +5,8 @@ import { FilterOutlined, PlusOutlined } from "@ant-design/icons";
 import Papa from "papaparse";
 import { categories, transaction } from "~/types";
 import dayjs from "dayjs";
-import { AddTransactionContainer } from "~/app/actions/transactionActions";
+import { addTransactions } from "~/app/actions/transactionActions";
+import { processParsedCSVFile } from "~/app/util/parsingUtil";
 
 interface CSVTransaction {
   Date: string;
@@ -72,19 +73,19 @@ const convertCSVTransaction = (
       category,
       description,
       date,
-      id: key,
+      id: key, //Todo: this looks problamatic. address this.
       pricing: +csvTransaction.Amount.replaceAll("$", "").replaceAll(",", ""),
     };
   }
 };
 
-const processParsedCSVFile = (
-  transactions: (DebitCSVTransaction | CreditCSVTransaction)[],
-): transaction[] => {
-  if (transactions.at(0) && transactions[0]) {
-    return transactions.map(convertCSVTransaction);
-  } else return [];
-};
+// const processParsedCSVFile = (
+//   transactions: (DebitCSVTransaction | CreditCSVTransaction)[],
+// ): transaction[] => {
+//   if (transactions.at(0) && transactions[0]) {
+//     return transactions.map(convertCSVTransaction);
+//   } else return [];
+// };
 
 function SearchInputs() {
   const props: UploadProps = {
@@ -106,8 +107,9 @@ function SearchInputs() {
 
             if (som.data.length > 0) {
               //!Todo: add these back in
+              // const processedCSVFiles = processParsedCSVFile(som.data);
               const processedCSVFiles = processParsedCSVFile(som.data);
-              AddTransactionContainer(processedCSVFiles);
+              addTransactions(processedCSVFiles);
               //!   setTransactions(processedCSVFiles);
             }
           } catch (error) {

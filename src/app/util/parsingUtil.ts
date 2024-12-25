@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import {
+  categories,
   CreditCSVTransaction,
   CSVTransaction,
   DebitCSVTransaction,
@@ -36,7 +37,7 @@ export const convertCSVTransaction = (
     csvTransaction.Description,
   );
   const category = isDebitCSVTransaction(csvTransaction)
-    ? csvTransaction.Category
+    ? pncCategoryToThisCategory(csvTransaction.Category)
     : "Debt repayments / credit cards/charge cards";
 
   const key = index.toString();
@@ -98,7 +99,37 @@ export const purifyDescriptionString = (rawDescription: string) => {
     return rawDescription
       .replaceAll(ACH_CREDIT, "")
       .replace(/\b\w*\d\w*\b/, ""); //the replace here is not global and gets rid of the first word with numbers in it.
-  }
+  } else console.error("displaying rawDescription");
 
   return rawDescription;
+};
+
+//switch is here to show all pnc categories are correctly categorized.
+export const pncCategoryToThisCategory = (pncCategory: string): categories => {
+  switch (pncCategory) {
+    case "Auto + Gas":
+      return "Transportation / gasoline";
+    case "Checks Written":
+      return "Uncategorized"; //! checks are by default not actually associated with a category and should be manually changed.
+    case "Credit Card Payments":
+      return "Debt repayments / credit cards/charge cards";
+    case "Deposits":
+      return "Income";
+    case "Electronics + Merchandise":
+      return "Uncategorized"; //again, this is too general and should have been categorized at this point.
+    case "Groceries":
+      return "Food / groceries";
+    case "Healthcare":
+      return "Uncategorized"; //too general. should have been categorized at this point.
+    case "Paychecks":
+      return "Income";
+    case "Restaurants":
+      return "Food / restaurants";
+    case "Securities Trades":
+      return "Uncategorized";
+    case "Transfers":
+      return "Uncategorized";
+    default:
+      return "Uncategorized";
+  }
 };

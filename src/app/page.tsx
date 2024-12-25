@@ -20,6 +20,13 @@ export default async function Home() {
           </main> */
   }
 
+  const categorieSummaries = await api.transactions.getMonthCategorySummary(3);
+
+  console.error(
+    "dow ",
+    categorieSummaries.map(({ category }) => category),
+  );
+
   return (
     <body>
       <main className="flex min-h-screen flex-grow flex-col">
@@ -31,8 +38,14 @@ export default async function Home() {
               size="middle"
               style={{ display: "flex" }}
             >
+              {/* {categorieSummaries.map((bah) => (
+                <div>
+                  <h1>{bah.category}</h1>
+                  <h1>{bah._sum.pricing}</h1>
+                </div>
+              ))} */}
               <Card title="Category Summaries">
-                <CategorySummaryTable />
+                <CategorySummaryTable data={categorieSummaries} />
               </Card>
             </Space>
           </Content>

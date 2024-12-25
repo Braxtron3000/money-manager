@@ -63,3 +63,11 @@ export async function editTransaction(transaction: transaction) {
     console.error("error updating transactions: ", error);
   }
 }
+
+export async function getMonthCategorySummary(monthOfYear: number) {
+  try {
+    return api.transactions.getMonthCategorySummary(monthOfYear);
+  } catch (error) {
+    console.error("error gettingmonthcategory summary ", error);
+  }
+}
