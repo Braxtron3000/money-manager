@@ -1,5 +1,6 @@
 import dayjs, { Dayjs } from "dayjs";
 
+//Todo: theres probably a better way of doing this so the category tree can work.
 export type categories =
   | "Taxes / FICA (social security & medicare)"
   | "Taxes / Federal"
@@ -135,8 +136,8 @@ export function isCategory(string: string): string is categories {
   return categoriesList.findIndex((category) => category === string) > -1;
 }
 
-interface CategoryNode {
-  value: string;
+export interface CategoryNode {
+  value: string; // value and label should be typed to correlate with category type.
   label: string;
   children?: CategoryNode[];
 }
