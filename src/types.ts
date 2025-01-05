@@ -2,135 +2,135 @@ import dayjs, { Dayjs } from "dayjs";
 
 //Todo: theres probably a better way of doing this so the category tree can work.
 export type categories =
-  | "Taxes / FICA (social security & medicare)"
-  | "Taxes / Federal"
-  | "Taxes / State & local"
-  | "Housing / rent"
-  | "Housing / mortgage"
-  | "Housing / property taxes"
-  | "Housing / gas/electric/oil"
-  | "Housing / water/garbage"
-  | "Housing / phones"
-  | "Housing / tv"
-  | "Housing / internet"
-  | "Housing / furniture/appliances"
-  | "Housing / housekeeper"
-  | "Housing / maintenance/repairs"
-  | "Food / groceries"
-  | "Food / restaurants"
-  | "Transportation / gasoline"
-  | "Transportation / maintenance/repairs"
-  | "Transportation / state registration fees"
-  | "Transportation / tolls/parking"
-  | "Transportation / public transportation/taxis"
-  | "Debt repayments / credit cards/charge cards"
-  | "Debt repayments / auto loans"
-  | "Debt repayments / student loans"
-  | "Debt repayments / other"
-  | "Attire / clothing"
-  | "Attire / shoes"
-  | "Attire / jewelry"
-  | "Attire / dry cleaning"
-  | "Fun stuff / Entertainment (movies, concerts)"
-  | "Fun stuff / Vacation & travel"
-  | "Fun stuff / Gifts"
-  | "Fun stuff / Hobbies"
-  | "Fun stuff / Subscription/memberships"
-  | "Fun stuff / Pets"
-  | "Fun stuff / Other"
-  | "Personal care / Haircuts"
-  | "Personal care / makeup"
-  | "Personal care / other"
-  | "Personal business / Accountant/attorney/financial advisor"
-  | "Personal business / other"
-  | "Health Care / physicians and hospitals"
-  | "Health Care / drugs"
-  | "Health Care / dental and visions"
-  | "Health Care / therapy"
-  | "Health Care / Health club or gym"
-  | "Insurance / Homeowners/renter’s"
-  | "Insurance / auto"
-  | "Insurance / health"
-  | "Insurance / life"
-  | "Insurance / disability"
-  | "Insurance / Long-term care"
-  | "Insurance / umbrella liability"
-  | "Education / Tuition"
-  | "Education / books"
-  | "Education / supplies"
-  | "Education / room&board"
-  | "Children / day care"
-  | "Children / toys"
-  | "Children / activities"
-  | "Children / child support"
-  | "Children / charitable donations"
+  | "FICA (social security & medicare)"
+  | "Federal"
+  | "State & local"
+  | "rent"
+  | "mortgage"
+  | "property taxes"
+  | "gas/electric/oil"
+  | "water/garbage"
+  | "phones"
+  | "tv"
+  | "internet"
+  | "furniture/appliances"
+  | "housekeeper"
+  | "maintenance/repairs"
+  | "groceries"
+  | "restaurants"
+  | "gasoline"
+  | "maintenance/repairs"
+  | "state registration fees"
+  | "tolls/parking"
+  | "public transportation/taxis"
+  | "credit cards/charge cards"
+  | "auto loans"
+  | "student loans"
+  | "other"
+  | "clothing"
+  | "shoes"
+  | "jewelry"
+  | "dry cleaning"
+  | "Entertainment (movies, concerts)"
+  | "Vacation & travel"
+  | "Gifts"
+  | "Hobbies"
+  | "Subscription/memberships"
+  | "Pets"
+  | "Other"
+  | "Haircuts"
+  | "makeup"
+  | "other"
+  | "Accountant/attorney/financial advisor"
+  | "other"
+  | "physicians and hospitals"
+  | "drugs"
+  | "dental and visions"
+  | "therapy"
+  | "Health club or gym"
+  | "Homeowners/renter’s"
+  | "auto"
+  | "health"
+  | "life"
+  | "disability"
+  | "Long-term care"
+  | "umbrella liability"
+  | "Tuition"
+  | "books"
+  | "supplies"
+  | "room&board"
+  | "day care"
+  | "toys"
+  | "activities"
+  | "child support"
+  | "charitable donations"
   | "Uncategorized"
   | "Income"; //Todo: income needs sub incomes such as from investments and gifts.
 //Todo: also add in investment expenses
 
 export const categoriesList: categories[] = [
-  "Taxes / FICA (social security & medicare)",
-  "Taxes / Federal",
-  "Taxes / State & local",
-  "Housing / rent",
-  "Housing / mortgage",
-  "Housing / property taxes",
-  "Housing / gas/electric/oil",
-  "Housing / water/garbage",
-  "Housing / phones",
-  "Housing / tv",
-  "Housing / internet",
-  "Housing / furniture/appliances",
-  "Housing / housekeeper",
-  "Housing / maintenance/repairs",
-  "Food / groceries",
-  "Food / restaurants",
-  "Transportation / gasoline",
-  "Transportation / maintenance/repairs",
-  "Transportation / state registration fees",
-  "Transportation / tolls/parking",
-  "Transportation / public transportation/taxis",
-  "Debt repayments / credit cards/charge cards",
-  "Debt repayments / auto loans",
-  "Debt repayments / student loans",
-  "Debt repayments / other",
-  "Attire / clothing",
-  "Attire / shoes",
-  "Attire / jewelry",
-  "Attire / dry cleaning",
-  "Fun stuff / Entertainment (movies, concerts)",
-  "Fun stuff / Vacation & travel",
-  "Fun stuff / Gifts",
-  "Fun stuff / Hobbies",
-  "Fun stuff / Subscription/memberships",
-  "Fun stuff / Pets",
-  "Fun stuff / Other",
-  "Personal care / Haircuts",
-  "Personal care / makeup",
-  "Personal care / other",
-  "Personal business / Accountant/attorney/financial advisor",
-  "Personal business / other",
-  "Health Care / physicians and hospitals",
-  "Health Care / drugs",
-  "Health Care / dental and visions",
-  "Health Care / therapy",
-  "Health Care / Health club or gym",
-  "Insurance / Homeowners/renter’s",
-  "Insurance / auto",
-  "Insurance / health",
-  "Insurance / life",
-  "Insurance / disability",
-  "Insurance / Long-term care",
-  "Insurance / umbrella liability",
-  "Education / Tuition",
-  "Education / books",
-  "Education / supplies",
-  "Education / room&board",
-  "Children / day care",
-  "Children / toys",
-  "Children / activities",
-  "Children / child support",
-  "Children / charitable donations",
+  "FICA (social security & medicare)",
+  "Federal",
+  "State & local",
+  "rent",
+  "mortgage",
+  "property taxes",
+  "gas/electric/oil",
+  "water/garbage",
+  "phones",
+  "tv",
+  "internet",
+  "furniture/appliances",
+  "housekeeper",
+  "maintenance/repairs",
+  "groceries",
+  "restaurants",
+  "gasoline",
+  "maintenance/repairs",
+  "state registration fees",
+  "tolls/parking",
+  "public transportation/taxis",
+  "credit cards/charge cards",
+  "auto loans",
+  "student loans",
+  "other",
+  "clothing",
+  "shoes",
+  "jewelry",
+  "dry cleaning",
+  "Entertainment (movies, concerts)",
+  "Vacation & travel",
+  "Gifts",
+  "Hobbies",
+  "Subscription/memberships",
+  "Pets",
+  "Other",
+  "Haircuts",
+  "makeup",
+  "other",
+  "Accountant/attorney/financial advisor",
+  "other",
+  "physicians and hospitals",
+  "drugs",
+  "dental and visions",
+  "therapy",
+  "Health club or gym",
+  "Homeowners/renter’s",
+  "auto",
+  "health",
+  "life",
+  "disability",
+  "Long-term care",
+  "umbrella liability",
+  "Tuition",
+  "books",
+  "supplies",
+  "room&board",
+  "day care",
+  "toys",
+  "activities",
+  "child support",
+  "charitable donations",
   "Uncategorized",
   "Income",
 ] as const;

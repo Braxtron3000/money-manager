@@ -163,22 +163,27 @@ function EditableTable({
   };
 
   const categoryColors = (category: string) => {
-    // type mainCategories = 'Taxes' | 'Housing'|'Food'|'Transportation''Debt repayments'
+    const majorCategory = categoryTree.find((branch) => {
+      return branch.children?.some((e) => e.value === category);
+    }); //!this assumes that the tree is only one level deep which is fine for now.
 
-    if (category.includes("Taxes")) return "blue";
-    else if (category.includes("Housing")) return "HotPink";
-    else if (category.includes("Food")) return "purple";
-    else if (category.includes("Transportation")) return "volcanoe";
-    else if (category.includes("Debt repayments")) return "MediumAquamarine";
-    else if (category.includes("Attire")) return "turquoise";
-    else if (category.includes("Fun stuff")) return "pink";
-    else if (category.includes("Personal")) return "DeepSkyBlue";
-    else if (category.includes("Personal business")) return "teal";
-    else if (category.includes("Health Care")) return "royalblue";
-    else if (category.includes("Insurance")) return "darkorange";
-    else if (category.includes("Education")) return "mediumaquamarine";
-    else if (category.includes("Children")) return "lawngreen";
-    else if (category.includes("Uncategorized")) return "maroon";
+    // console.error("majorCategory ", majorCategory, "cateogry " + category);
+
+    if (majorCategory?.value == "Taxes") return "blue";
+    else if (majorCategory?.value == "Housing") return "HotPink";
+    else if (majorCategory?.value == "Food") return "purple";
+    else if (majorCategory?.value == "Transportation") return "volcanoe";
+    else if (majorCategory?.value == "Debt repayments")
+      return "MediumAquamarine";
+    else if (majorCategory?.value == "Attire") return "turquoise";
+    else if (majorCategory?.value == "Fun stuff") return "pink";
+    else if (majorCategory?.value == "Personal") return "DeepSkyBlue";
+    else if (majorCategory?.value == "Personal business") return "teal";
+    else if (majorCategory?.value == "Health Care") return "royalblue";
+    else if (majorCategory?.value == "Insurance") return "darkorange";
+    else if (majorCategory?.value == "Education") return "mediumaquamarine";
+    else if (majorCategory?.value == "Children") return "lawngreen";
+    else if (majorCategory?.value == "Uncategorized") return "maroon";
   };
   const [notiicationApi, contextHolder] = notification.useNotification();
 

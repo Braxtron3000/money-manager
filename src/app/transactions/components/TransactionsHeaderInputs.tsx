@@ -51,7 +51,7 @@ const convertCSVTransaction = (
   const description = csvTransaction.Description;
   const category = isDebitCSVTransaction(csvTransaction)
     ? csvTransaction.Category
-    : "Debt repayments / credit cards/charge cards";
+    : "credit cards/charge cards";
 
   const key = index.toString();
 

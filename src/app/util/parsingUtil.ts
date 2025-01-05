@@ -38,7 +38,7 @@ export const convertCSVTransaction = (
   );
   const category = isDebitCSVTransaction(csvTransaction)
     ? pncCategoryToThisCategory(csvTransaction.Category)
-    : "Debt repayments / credit cards/charge cards";
+    : "credit cards/charge cards";
 
   const key = index.toString();
 
@@ -108,23 +108,23 @@ export const purifyDescriptionString = (rawDescription: string) => {
 export const pncCategoryToThisCategory = (pncCategory: string): categories => {
   switch (pncCategory) {
     case "Auto + Gas":
-      return "Transportation / gasoline";
+      return "gasoline";
     case "Checks Written":
       return "Uncategorized"; //! checks are by default not actually associated with a category and should be manually changed.
     case "Credit Card Payments":
-      return "Debt repayments / credit cards/charge cards";
+      return "credit cards/charge cards";
     case "Deposits":
       return "Income";
     case "Electronics + Merchandise":
       return "Uncategorized"; //again, this is too general and should have been categorized at this point.
     case "Groceries":
-      return "Food / groceries";
+      return "groceries";
     case "Healthcare":
       return "Uncategorized"; //too general. should have been categorized at this point.
     case "Paychecks":
       return "Income";
     case "Restaurants":
-      return "Food / restaurants";
+      return "restaurants";
     case "Securities Trades":
       return "Uncategorized";
     case "Transfers":
@@ -132,4 +132,11 @@ export const pncCategoryToThisCategory = (pncCategory: string): categories => {
     default:
       return "Uncategorized";
   }
+};
+
+export const categoryToTreeValue = (category: string): string => {
+  return category
+    .substring(category.lastIndexOf("/") + 1)
+    .trim()
+    .replace(/^./, (char) => char.toUpperCase());
 };
