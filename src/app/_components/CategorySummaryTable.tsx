@@ -25,19 +25,30 @@ const CategorySummaryTable = ({
   interface DataType {
     key: React.Key;
     name: string;
-    total: number;
+    total: number | null | undefined;
   }
 
-  const dataSource: DataType[] = categoryTree.map((branch, index) => ({
-    key: index,
-    name: branch.label,
-    total: Math.random() * 100,
-    children: branch.children?.map((branch, index) => ({
+  const dataSource: DataType[] = categoryTree.map((branch, index) => {
+    const childrenTotals = branch.children?.map((branch, index) => ({
       key: index + " " + index,
       name: branch.label,
-      total: Math.random() * 100,
-    })),
-  }));
+      total: data?.find((row) => row.category === branch.label)?._sum.pricing,
+    }));
+
+    const parentCategoryTotal = childrenTotals
+      ?.map(({ total }) => total)
+      .reduce(
+        (accumulator, currentVal) =>
+          (Number(accumulator) || 0) + (Number(currentVal) || 0),
+      );
+
+    return {
+      key: index,
+      name: branch.label,
+      total: parentCategoryTotal || null,
+      children: childrenTotals,
+    };
+  });
 
   const dataSource2: DataType[] =
     data?.map((bah, index) => ({
@@ -61,7 +72,7 @@ const CategorySummaryTable = ({
 
   return (
     <Table
-      dataSource={dataSource2}
+      dataSource={dataSource}
       columns={columnsFromGuide}
       pagination={false}
       expandable={{
