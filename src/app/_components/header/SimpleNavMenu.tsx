@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, MenuProps } from "antd";
+import { Menu, MenuProps, theme } from "antd";
 import { AreaChartOutlined, TableOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 
@@ -26,7 +26,14 @@ const SimpleNavMenu = ({ disabled }: { disabled: boolean }) => {
   ];
 
   return (
-    <Menu mode="horizontal" items={items} style={{ flex: 1, minWidth: 0 }} />
+    <Menu
+      mode="horizontal"
+      // theme={theme.darkAlgorithm}
+      // color={}
+      theme="dark"
+      items={items}
+      style={{ flex: 1, minWidth: 0, backgroundColor: "transparent" }}
+    />
   );
 };
 
