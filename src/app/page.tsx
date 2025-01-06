@@ -20,30 +20,39 @@ export default async function Home() {
           </main> */
   }
 
-  const categorieSummaries = await api.transactions.getMonthCategorySummary(3);
+  const categorieSummaries = session
+    ? await api.transactions.getMonthCategorySummary(3)
+    : [];
 
   return (
     <body>
       <main className="flex min-h-screen flex-grow flex-col">
         <Layout>
           <FullHeader />
-          <Content>
-            <Space
-              direction="vertical"
-              size="middle"
-              style={{ display: "flex" }}
-            >
-              {/* {categorieSummaries.map((bah) => (
+          {session ? (
+            <Content>
+              <Space
+                direction="vertical"
+                size="middle"
+                style={{ display: "flex" }}
+              >
+                {/* {categorieSummaries.map((bah) => (
                 <div>
-                  <h1>{bah.category}</h1>
-                  <h1>{bah._sum.pricing}</h1>
+                <h1>{bah.category}</h1>
+                <h1>{bah._sum.pricing}</h1>
                 </div>
-              ))} */}
-              <Card title="Category Summaries">
-                <CategorySummaryTable data={categorieSummaries} />
-              </Card>
-            </Space>
-          </Content>
+                ))} */}
+                <Card title="Category Summaries">
+                  <CategorySummaryTable data={categorieSummaries} />
+                </Card>
+              </Space>
+            </Content>
+          ) : (
+            <h1>
+              What is this website? I'll tell you later. For right now, click
+              the sign in button in the top right
+            </h1>
+          )}
         </Layout>
       </main>
     </body>
