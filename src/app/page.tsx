@@ -5,7 +5,7 @@ import { api } from "~/trpc/server";
 import SideBarHeaderLayout from "./_components/SidebarHeaderLayout";
 import { CreatePost } from "./_components/Create-post";
 import FullHeader from "./_components/header/Fullheader";
-import { Card, Layout, Space } from "antd";
+import { Card, DatePicker, Layout, Space } from "antd";
 import { Content } from "antd/es/layout/layout";
 import CategorySummaryTable from "./_components/CategorySummaryTable";
 
@@ -21,11 +21,6 @@ export default async function Home() {
   }
 
   const categorieSummaries = await api.transactions.getMonthCategorySummary(3);
-
-  console.error(
-    "dow ",
-    categorieSummaries.map(({ category }) => category),
-  );
 
   return (
     <body>

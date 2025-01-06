@@ -1,8 +1,8 @@
 "use client";
 import { Prisma } from "@prisma/client";
-import { Table } from "antd";
+import { DatePicker, Table } from "antd";
 import type { TableColumnsType } from "antd";
-
+import type { DatePickerProps } from "antd";
 import React, { useState } from "react";
 import { categoryTree } from "~/types";
 
@@ -70,22 +70,30 @@ const CategorySummaryTable = ({
     },
   ];
 
+  const onChangeMonth: DatePickerProps["onChange"] = (date, dateString) => {
+    console.log(date, dateString);
+  };
+
   return (
-    <Table
-      dataSource={dataSource}
-      columns={columnsFromGuide}
-      pagination={false}
-      expandable={{
-        expandedRowKeys,
-        onExpand: (expanded, record) => {
-          expanded
-            ? setExpandedRowsKeys([...expandedRowKeys, record.key])
-            : setExpandedRowsKeys(
-                expandedRowKeys.filter((key) => key !== record.key),
-              );
-        },
-      }}
-    />
+    <>
+      <DatePicker onChange={onChangeMonth} picker="month" />
+
+      <Table
+        dataSource={dataSource}
+        columns={columnsFromGuide}
+        pagination={false}
+        expandable={{
+          expandedRowKeys,
+          onExpand: (expanded, record) => {
+            expanded
+              ? setExpandedRowsKeys([...expandedRowKeys, record.key])
+              : setExpandedRowsKeys(
+                  expandedRowKeys.filter((key) => key !== record.key),
+                );
+          },
+        }}
+      />
+    </>
   );
 };
 
