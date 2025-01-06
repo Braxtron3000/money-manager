@@ -1,6 +1,6 @@
 "use client";
 import { Prisma } from "@prisma/client";
-import { DatePicker, Table } from "antd";
+import { Button, DatePicker, Modal, Table } from "antd";
 import type { TableColumnsType } from "antd";
 import type { DatePickerProps } from "antd";
 import React, { useState } from "react";
@@ -50,13 +50,6 @@ const CategorySummaryTable = ({
     };
   });
 
-  const dataSource2: DataType[] =
-    data?.map((bah, index) => ({
-      key: index,
-      name: bah.category,
-      total: bah._sum.pricing ?? 0,
-    })) ?? [];
-
   const columnsFromGuide: TableColumnsType<DataType> = [
     {
       title: "Name",
@@ -68,16 +61,51 @@ const CategorySummaryTable = ({
       dataIndex: "total",
       key: "total",
     },
+    {
+      title: "Budgeted",
+      dataIndex: "budgeted",
+      key: "budgeted",
+    },
   ];
 
   const onChangeMonth: DatePickerProps["onChange"] = (date, dateString) => {
     console.log(date, dateString);
   };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const createNewBudgetView = (
+    <>
+      <Button type="primary" onClick={showModal}>
+        create new budget
+      </Button>
+      {/* //! if its the first budget say create a new budget! */}
+      <Modal
+        title="Create New Budget"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>This will start next month if this isnt your first one</p>
+      </Modal>
+    </>
+  );
 
   return (
     <>
       <DatePicker onChange={onChangeMonth} picker="month" />
-
+      {createNewBudgetView}
       <Table
         dataSource={dataSource}
         columns={columnsFromGuide}
