@@ -1,6 +1,6 @@
 "use client";
 import { Prisma } from "@prisma/client";
-import { Button, DatePicker, Modal, Table } from "antd";
+import { Button, DatePicker, Input, Modal, Space, Table } from "antd";
 import type { TableColumnsType } from "antd";
 import type { DatePickerProps } from "antd";
 import React, { useState } from "react";
@@ -29,18 +29,21 @@ const CategorySummaryTable = ({
   }
 
   const dataSource: DataType[] = categoryTree.map((branch, index) => {
-    const childrenTotals = branch.children?.map((branch, index) => ({
+    const childrenTotals = branch.children?.map((childbranch, index) => ({
       key: index + " " + index,
-      name: branch.label,
-      total: data?.find((row) => row.category === branch.label)?._sum.pricing,
+      name: childbranch.label,
+      total: data?.find((row) => row.category === childbranch.label)?._sum
+        .pricing,
     }));
 
     const parentCategoryTotal = childrenTotals
-      ?.map(({ total }) => total)
-      .reduce(
-        (accumulator, currentVal) =>
-          (Number(accumulator) || 0) + (Number(currentVal) || 0),
-      );
+      ? childrenTotals
+          ?.map(({ total }) => total)
+          .reduce(
+            (accumulator, currentVal) =>
+              (Number(accumulator) || 0) + (Number(currentVal) || 0),
+          )
+      : data?.find((row) => row.category === branch.label)?._sum.pricing;
 
     return {
       key: index,
@@ -98,6 +101,24 @@ const CategorySummaryTable = ({
         onCancel={handleCancel}
       >
         <p>This will start next month if this isnt your first one</p>
+        <div className="h-72 overflow-y-scroll">
+          {categoryTree.map((branch) => (
+            <div className="grid-cols-3" key={branch.label}>
+              <h1>{branch.label}</h1>
+              {branch.children ? (
+                branch.children?.map((child) => (
+                  <div className="flex-row justify-between" key={child.value}>
+                    <h3 className="inline-block w-1/2">{child.label}</h3>
+                    <Input style={{ display: "inline-block", width: "25%" }} />
+                    {/* <input style={{ flex: 1, display: "inline-block" }} /> */}
+                  </div>
+                ))
+              ) : (
+                <Input style={{ display: "inline-block", width: "25%" }} />
+              )}
+            </div>
+          ))}
+        </div>
       </Modal>
     </>
   );
