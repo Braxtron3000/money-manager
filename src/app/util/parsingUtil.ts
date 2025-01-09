@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import {
   categories,
+  categoryTree,
   CreditCSVTransaction,
   CSVTransaction,
   DebitCSVTransaction,
@@ -139,4 +140,52 @@ export const categoryToTreeValue = (category: string): string => {
     .substring(category.lastIndexOf("/") + 1)
     .trim()
     .replace(/^./, (char) => char.toUpperCase());
+};
+
+export const categoryColors = (category: string) => {
+  const majorCategory = categoryTree.find((branch) => {
+    return branch.children?.some((e) => e.value === category);
+  }); //!this assumes that the tree is only one level deep which is fine for now.
+
+  // console.error("majorCategory ", majorCategory, "cateogry " + category);
+
+  if (majorCategory?.value == "Taxes" || category == "Taxes") return "blue";
+  else if (majorCategory?.value == "Housing" || category == "Housing")
+    return "HotPink";
+  else if (majorCategory?.value == "Food" || category == "Food")
+    return "purple";
+  else if (
+    majorCategory?.value == "Transportation" ||
+    category == "Transportation"
+  )
+    return "red";
+  else if (
+    majorCategory?.value == "Debt repayments" ||
+    category === "Debt repayments"
+  )
+    return "MediumAquamarine";
+  else if (majorCategory?.value == "Attire" || category === "Attire")
+    return "turquoise";
+  else if (majorCategory?.value == "Fun stuff" || category === "Fun stuff")
+    return "pink";
+  else if (majorCategory?.value == "Personal" || category === "Fun stuff")
+    return "DeepSkyBlue";
+  else if (
+    majorCategory?.value == "Personal business" ||
+    category === "Fun stuff"
+  )
+    return "teal";
+  else if (majorCategory?.value == "Health Care" || category === "Health Care")
+    return "royalblue";
+  else if (majorCategory?.value == "Insurance" || category === "Insurance")
+    return "darkorange";
+  else if (majorCategory?.value == "Education" || category === "Education")
+    return "mediumaquamarine";
+  else if (majorCategory?.value == "Children" || category === "Children")
+    return "lawngreen";
+  else if (
+    majorCategory?.value == "Uncategorized" ||
+    category === "Uncategorized"
+  )
+    return "maroon";
 };

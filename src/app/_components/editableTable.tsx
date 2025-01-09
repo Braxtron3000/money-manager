@@ -19,6 +19,7 @@ import { ColumnsType } from "antd/es/table";
 import * as transactionActions from "../actions/transactionActions";
 import { api, RouterInputs, type ReactQueryOptions } from "~/trpc/react";
 import { describe } from "node:test";
+import { categoryColors } from "../util/parsingUtil";
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
@@ -162,29 +163,6 @@ function EditableTable({
     }
   };
 
-  const categoryColors = (category: string) => {
-    const majorCategory = categoryTree.find((branch) => {
-      return branch.children?.some((e) => e.value === category);
-    }); //!this assumes that the tree is only one level deep which is fine for now.
-
-    // console.error("majorCategory ", majorCategory, "cateogry " + category);
-
-    if (majorCategory?.value == "Taxes") return "blue";
-    else if (majorCategory?.value == "Housing") return "HotPink";
-    else if (majorCategory?.value == "Food") return "purple";
-    else if (majorCategory?.value == "Transportation") return "volcanoe";
-    else if (majorCategory?.value == "Debt repayments")
-      return "MediumAquamarine";
-    else if (majorCategory?.value == "Attire") return "turquoise";
-    else if (majorCategory?.value == "Fun stuff") return "pink";
-    else if (majorCategory?.value == "Personal") return "DeepSkyBlue";
-    else if (majorCategory?.value == "Personal business") return "teal";
-    else if (majorCategory?.value == "Health Care") return "royalblue";
-    else if (majorCategory?.value == "Insurance") return "darkorange";
-    else if (majorCategory?.value == "Education") return "mediumaquamarine";
-    else if (majorCategory?.value == "Children") return "lawngreen";
-    else if (majorCategory?.value == "Uncategorized") return "maroon";
-  };
   const [notiicationApi, contextHolder] = notification.useNotification();
 
   const handleDelete = (key: React.Key) => {

@@ -20,6 +20,12 @@ export const budgetsRouter = createTRPCRouter({
       z.object({
         current: z.boolean(),
         startDate: z.date(),
+        categories: z
+          .object({
+            category: z.string(),
+            amount: z.number(),
+          })
+          .array(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -31,6 +37,10 @@ export const budgetsRouter = createTRPCRouter({
           current: input.current,
           startDate: input.startDate,
           createdBy: { connect: { id: ctx.session.user.id } },
+          categories: { create: input.categories },
+        },
+        include: {
+          categories: true,
         },
       });
     }),

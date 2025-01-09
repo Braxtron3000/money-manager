@@ -1,10 +1,29 @@
 "use client";
 import { Prisma } from "@prisma/client";
-import { Button, DatePicker, Input, Modal, Space, Table } from "antd";
-import type { TableColumnsType } from "antd";
+import {
+  Button,
+  Carousel,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  theme,
+  Space,
+  Table,
+  Tag,
+} from "antd";
+import type { FormInstance, TableColumnsType } from "antd";
 import type { DatePickerProps } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { categoryTree } from "~/types";
+import { categoryColors } from "../util/parsingUtil";
+import type { GetRef } from "antd";
+import {
+  LeftOutlined,
+  RightOutlined,
+  RightCircleFilled,
+} from "@ant-design/icons";
 
 const CategorySummaryTable = ({
   data,
@@ -74,59 +93,11 @@ const CategorySummaryTable = ({
   const onChangeMonth: DatePickerProps["onChange"] = (date, dateString) => {
     console.log(date, dateString);
   };
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const createNewBudgetView = (
-    <>
-      <Button type="primary" onClick={showModal}>
-        create new budget
-      </Button>
-      {/* //! if its the first budget say create a new budget! */}
-      <Modal
-        title="Create New Budget"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>This will start next month if this isnt your first one</p>
-        <div className="h-72 overflow-y-scroll">
-          {categoryTree.map((branch) => (
-            <div className="grid-cols-3" key={branch.label}>
-              <h1>{branch.label}</h1>
-              {branch.children ? (
-                branch.children?.map((child) => (
-                  <div className="flex-row justify-between" key={child.value}>
-                    <h3 className="inline-block w-1/2">{child.label}</h3>
-                    <Input style={{ display: "inline-block", width: "25%" }} />
-                    {/* <input style={{ flex: 1, display: "inline-block" }} /> */}
-                  </div>
-                ))
-              ) : (
-                <Input style={{ display: "inline-block", width: "25%" }} />
-              )}
-            </div>
-          ))}
-        </div>
-      </Modal>
-    </>
-  );
 
   return (
     <>
       <DatePicker onChange={onChangeMonth} picker="month" />
-      {createNewBudgetView}
+      <CreateNewBudgetView />
       <Table
         dataSource={dataSource}
         columns={columnsFromGuide}
@@ -147,3 +118,101 @@ const CategorySummaryTable = ({
 };
 
 export default CategorySummaryTable;
+
+const useResetFormOnCloseModal = ({
+  form,
+  open,
+}: {
+  form: FormInstance;
+  open: boolean;
+}) => {
+  const prevOpenRef = useRef<boolean>(null);
+
+  const prevOpen = prevOpenRef.current;
+
+  useEffect(() => {
+    if (!open && prevOpen) {
+      form.resetFields();
+    }
+  }, [form, prevOpen, open]);
+};
+
+const CreateNewBudgetView = () => {
+  const [form] = Form.useForm();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    form.submit();
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  useResetFormOnCloseModal({
+    form,
+    open: isModalOpen,
+  });
+
+  const { token } = theme.useToken();
+  return (
+    <>
+      <Button type="primary" onClick={showModal}>
+        create new budget
+      </Button>
+      {/* //! if its the first budget say create a new budget! */}
+      <Modal
+        title="Create New Budget"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>This will start next month if this isnt your first one</p>
+        <Form labelAlign="left">
+          <Carousel
+            style={{ backgroundColor: "slategrey", borderRadius: 4 }}
+            infinite={false}
+            arrows
+          >
+            {categoryTree.map((branch) => (
+              <>
+                <Tag
+                  color={categoryColors(
+                    branch.label.charAt(0).toUpperCase() +
+                      branch.label.slice(1),
+                  )}
+                >
+                  {branch.label}
+                </Tag>
+                {/* <Tag color={categoryColors(branch.label)}>{branch.label}</Tag> */}
+                {branch.children ? (
+                  branch.children.map((child) => (
+                    <Form.Item label={child.label} name={child.label}>
+                      <InputNumber
+                        addonBefore={child.label === "Input" ? "+" : "-"}
+                        addonAfter="$"
+                      />
+                    </Form.Item>
+                  ))
+                ) : (
+                  <Form.Item label={branch.label} name={branch.label}>
+                    <InputNumber
+                      style={{ width: "40%" }}
+                      addonBefore={branch.label === "Input" ? "+" : "-"}
+                      addonAfter="$"
+                    />
+                  </Form.Item>
+                )}
+              </>
+            ))}
+          </Carousel>
+        </Form>
+      </Modal>
+    </>
+  );
+};
