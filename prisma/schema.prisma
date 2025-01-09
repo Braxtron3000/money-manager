@@ -91,4 +91,13 @@ model Budget {
   current Boolean //this just makes things easier to query
   createdBy User @relation(fields: [createdById], references: [id])
   createdById String
+  categories  BudgetCategory[]
+}
+
+model BudgetCategory {
+  id String @id @default(cuid())
+  budgetId String
+  budgetIdRelation Budget @relation(fields: [budgetId],references: [id])
+  category String
+  amount Int
 }
