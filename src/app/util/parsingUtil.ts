@@ -182,7 +182,7 @@ export const categoryColors = (category: string) => {
   else if (majorCategory?.value == "Education" || category === "Education")
     return "mediumaquamarine";
   else if (majorCategory?.value == "Children" || category === "Children")
-    return "lawngreen";
+    return "forestGreen";
   else if (
     majorCategory?.value == "Uncategorized" ||
     category === "Uncategorized"

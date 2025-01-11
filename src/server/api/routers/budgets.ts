@@ -45,6 +45,27 @@ export const budgetsRouter = createTRPCRouter({
       });
     }),
 
+  getLatest: protectedProcedure
+    .input(z.object({ month: z.number(), year: z.number() }).nullable())
+    .query(({ ctx, input }) => {
+      return ctx.db.budget.findFirst({
+        where: {
+          startDate: {
+            lte: input
+              ? new Date(
+                  `${input.year}-${input.month >= 10 ? input.month : "0" + input.month}-01T00:00:00Z`,
+                )
+              : new Date(),
+          },
+        },
+        orderBy: {
+          startDate: "desc",
+        },
+        include: {
+          categories: true,
+        },
+      });
+    }),
   // getLatest: protectedProcedure.query(({ ctx }) => {
   //   return ctx.db.post.findFirst({
   //     orderBy: { createdAt: "desc" },

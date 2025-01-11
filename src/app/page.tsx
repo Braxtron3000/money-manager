@@ -21,8 +21,15 @@ export default async function Home() {
   }
 
   const categorieSummaries = session
-    ? await api.transactions.getMonthCategorySummary(3)
+    ? await api.transactions.getMonthCategorySummary({
+        month: 2,
+        year: 2024,
+      })
     : [];
+
+  const somethingElse = await api.budgets.getLatest(null);
+
+  console.log("something else ", somethingElse);
 
   return (
     <body>

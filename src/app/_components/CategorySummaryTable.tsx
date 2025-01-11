@@ -1,29 +1,13 @@
 "use client";
 import { Prisma } from "@prisma/client";
-import {
-  Button,
-  Carousel,
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  theme,
-  Space,
-  Table,
-  Tag,
-} from "antd";
+import { Button, DatePicker, InputNumber, Modal, Table, Tag, Card } from "antd";
 import type { FormInstance, TableColumnsType } from "antd";
 import type { DatePickerProps } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { categoryTree } from "~/types";
+import { CategoryNode, categoryTree } from "~/types";
 import { categoryColors } from "../util/parsingUtil";
-import type { GetRef } from "antd";
-import {
-  LeftOutlined,
-  RightOutlined,
-  RightCircleFilled,
-} from "@ant-design/icons";
+import * as BudgetActions from "../actions/budgetActions";
+import dayjs from "dayjs";
 
 const CategorySummaryTable = ({
   data,
@@ -96,7 +80,11 @@ const CategorySummaryTable = ({
 
   return (
     <>
-      <DatePicker onChange={onChangeMonth} picker="month" />
+      <DatePicker
+        onChange={onChangeMonth}
+        picker="month"
+        defaultValue={dayjs()}
+      />
       <CreateNewBudgetView />
       <Table
         dataSource={dataSource}
@@ -138,15 +126,94 @@ const useResetFormOnCloseModal = ({
 };
 
 const CreateNewBudgetView = () => {
-  const [form] = Form.useForm();
+  // const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [budgetTree, setBudgetTree] = useState<
+    (CategoryNode & { amount: number })[]
+  >(
+    categoryTree.map((node) => ({
+      ...node,
+      amount: 0,
+      children: node.children?.map((child) => ({ ...child, amount: 0 })), //! this assumes theres only one layer of children
+    })),
+  );
+
+  const budgetMap = new Map<string, number>([]);
+
+  function da(
+    categoryTree: typeof budgetTree,
+    setNewTree: (node: (typeof budgetTree)[number]) => void,
+  ) {
+    categoryTree;
+  }
+
+  //! this assumes theres only one layer of children
+  // function updateBudgetTree(category: string, amount: number) {
+  //   let runningBudget: typeof budgetTree = {...budgetTree};
+
+  //   runningBudget.forEach((node) => {
+  //     if (node.label === category) {
+  //       const newBudget = budgetTree
+  //         .filter((searchNode) => searchNode !== node)
+  //         .concat({ ...node, amount });
+
+  //       setBudgetTree(newBudget);
+  //       return;
+
+  //     } else if (node.children) {
+  //       node.children.forEach(childNode => {
+  //         if(childNode.label===category){
+  //           const newBudget = budgetTree
+  //           .filter((searchNode) => searchNode !== node)
+  //           .concat({ ...node, amount: 100, children: node.children?.filter() });
+  //         }
+  //       })
+  //     }
+  //   });
+  // }
+
+  // type FieldType = {
+  //   [category: string]: number;
+  // };
+
+  // const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+  //   console.log("Success:", values);
+  // };
+
+  // const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
+  //   errorInfo,
+  // ) => {
+  //   console.log("Failed:", errorInfo);
+  // };
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
-    form.submit();
+    // form.submit();
+
+    const categories: {
+      category: string;
+      amount: number;
+    }[] = [];
+
+    budgetMap.forEach((amount, category) =>
+      categories.push({ category, amount }),
+    );
+
+    BudgetActions.createBudget({
+      categories,
+      current: false,
+      startDate: new Date(Date.now()),
+    }).then(() =>
+      console.log("created new budget! ", {
+        categories,
+        current: false,
+        startDate: new Date(Date.now()),
+      }),
+    );
     setIsModalOpen(false);
   };
 
@@ -154,65 +221,89 @@ const CreateNewBudgetView = () => {
     setIsModalOpen(false);
   };
 
-  useResetFormOnCloseModal({
-    form,
-    open: isModalOpen,
-  });
+  function onChangeText(label: string, text: any | null) {
+    if (Number(text)) {
+      budgetMap.set(label, Number(text));
+    } else if (!text) {
+      budgetMap.delete(label);
+    } else console.log("skipping update", text);
 
-  const { token } = theme.useToken();
+    console.log("new budget map ", budgetMap);
+  }
+
+  // useResetFormOnCloseModal({
+  //   form,
+  //   open: isModalOpen,
+  // });
+
   return (
     <>
       <Button type="primary" onClick={showModal}>
         create new budget
       </Button>
       {/* //! if its the first budget say create a new budget! */}
-      <Modal
-        title="Create New Budget"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>This will start next month if this isnt your first one</p>
-        <Form labelAlign="left">
-          <Carousel
-            style={{ backgroundColor: "slategrey", borderRadius: 4 }}
-            infinite={false}
-            arrows
-          >
-            {categoryTree.map((branch) => (
-              <>
-                <Tag
-                  color={categoryColors(
-                    branch.label.charAt(0).toUpperCase() +
-                      branch.label.slice(1),
-                  )}
-                >
-                  {branch.label}
-                </Tag>
-                {/* <Tag color={categoryColors(branch.label)}>{branch.label}</Tag> */}
-                {branch.children ? (
-                  branch.children.map((child) => (
-                    <Form.Item label={child.label} name={child.label}>
-                      <InputNumber
-                        addonBefore={child.label === "Input" ? "+" : "-"}
-                        addonAfter="$"
-                      />
-                    </Form.Item>
-                  ))
-                ) : (
-                  <Form.Item label={branch.label} name={branch.label}>
-                    <InputNumber
-                      style={{ width: "40%" }}
-                      addonBefore={branch.label === "Input" ? "+" : "-"}
-                      addonAfter="$"
-                    />
-                  </Form.Item>
+      {isModalOpen && ( //this is literally here to clear the fields.
+        <Modal
+          title="Create New Budget"
+          open={isModalOpen}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <p>This will start next month if this isnt your first one</p>
+          {/* <Form
+          form={form}
+          labelAlign="left"
+          onFinish={onFinish}
+          preserve={false}
+          onFinishFailed={onFinishFailed}
+        > */}
+          {/* <Carousel
+          style={{ backgroundColor: "slategrey", borderRadius: 4 }}
+          infinite={false}
+          arrows
+        > */}
+          {categoryTree.map((branch, index) => (
+            <Card
+              key={index}
+              style={{ marginBottom: "1rem", marginTop: "1rem" }}
+            >
+              <Tag
+                color={categoryColors(
+                  branch.label.charAt(0).toUpperCase() + branch.label.slice(1),
                 )}
-              </>
-            ))}
-          </Carousel>
-        </Form>
-      </Modal>
+              >
+                <h2>{branch.label}</h2>
+              </Tag>
+              {/* <Tag color={categoryColors(branch.label)}>{branch.label}</Tag> */}
+              {branch.children ? (
+                branch.children.map((child) => (
+                  // <Form.Item label={child.label} name={child.label}>
+                  <div>
+                    <h2>{child.label}</h2>
+                    <InputNumber
+                      addonBefore={child.label === "Income" ? "+" : "-"}
+                      addonAfter="$"
+                      onChange={(text) => onChangeText(child.label, text)}
+                    />
+                  </div>
+                  // </Form.Item>
+                ))
+              ) : (
+                // <Form.Item label={branch.label} name={branch.label}>
+                <InputNumber
+                  addonBefore={branch.label === "Income" ? "+" : "-"}
+                  addonAfter="$"
+                  onChange={(text) => onChangeText(branch.label, text)}
+                />
+                // </Form.Item>
+              )}
+            </Card>
+          ))}
+
+          {/* </Carousel> */}
+          {/* </Form> */}
+        </Modal>
+      )}
     </>
   );
 };

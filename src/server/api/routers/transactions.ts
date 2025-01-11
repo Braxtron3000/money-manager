@@ -80,9 +80,39 @@ export const transactionsRouter = createTRPCRouter({
       });
     }),
   getMonthCategorySummary: protectedProcedure
-    .input(z.number())
+    .input(
+      z.object({
+        month: z.number(),
+        year: z.number(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
+      let nextMonthDisplay: string;
+      let thisMonthDisplay: string;
+
+      if (input.month == 12) {
+        nextMonthDisplay = "01";
+      } else {
+        const nextmonthnumber = input.month + 1;
+        nextMonthDisplay =
+          nextmonthnumber >= 10
+            ? nextmonthnumber.toString()
+            : "0" + nextmonthnumber;
+      }
+
+      thisMonthDisplay =
+        input.month >= 10 ? input.toString() : "0" + input.month;
+
+      /*${ nextMonthDisplay == "01" ? input.year + 1 :  input.year} */
       return ctx.db.transaction.groupBy({
+        where: {
+          date: {
+            gte: new Date(`${input.year}-${thisMonthDisplay}-01T00:00:00Z`),
+            lt: new Date(
+              `${nextMonthDisplay == "01" ? input.year + 1 : input.year}-${nextMonthDisplay}-01T00:00:00Z`,
+            ),
+          },
+        },
         by: ["category"],
         _sum: {
           pricing: true,
