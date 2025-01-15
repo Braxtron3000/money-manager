@@ -28,7 +28,7 @@ const CategorySummaryTable = ({
 
   const dataSource: DataType[] = categoryTree.map((branch, index) => {
     const childrenTotals = branch.children?.map((childbranch, index) => ({
-      key: index + " " + index,
+      key: index + childbranch.value + index,
       name: childbranch.value,
       total: data?.find((row) => row.category === childbranch.value)?._sum
         .pricing,
