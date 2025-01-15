@@ -10,7 +10,6 @@ import { Content } from "antd/es/layout/layout";
 import CategorySummaryTable from "./_components/CategorySummaryTable";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
   const session = await getServerAuthSession();
 
   //the gradients pretty cool im keeping this here for the time being
@@ -19,6 +18,7 @@ export default async function Home() {
           
           </main> */
   }
+  // const today = new Date();
 
   const categorieSummaries = session
     ? await api.transactions.getMonthCategorySummary({
@@ -50,7 +50,10 @@ export default async function Home() {
                 </div>
                 ))} */}
                 <Card title="Category Summaries">
-                  <CategorySummaryTable data={categorieSummaries} />
+                  <CategorySummaryTable
+                    data={categorieSummaries}
+                    budget={somethingElse}
+                  />
                 </Card>
               </Space>
             </Content>

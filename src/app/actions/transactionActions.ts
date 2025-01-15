@@ -64,9 +64,11 @@ export async function editTransaction(transaction: transaction) {
   }
 }
 
-export async function getMonthCategorySummary(monthOfYear: number) {
+export async function getMonthCategorySummary(
+  monthYear: Parameters<typeof api.transactions.getMonthCategorySummary>[0],
+) {
   try {
-    return api.transactions.getMonthCategorySummary(monthOfYear);
+    return api.transactions.getMonthCategorySummary(monthYear);
   } catch (error) {
     console.error("error gettingmonthcategory summary ", error);
   }

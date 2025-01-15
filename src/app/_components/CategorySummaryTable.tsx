@@ -8,20 +8,14 @@ import { CategoryNode, categoryTree } from "~/types";
 import { categoryColors } from "../util/parsingUtil";
 import * as BudgetActions from "../actions/budgetActions";
 import dayjs from "dayjs";
+import { api } from "~/trpc/server";
 
 const CategorySummaryTable = ({
   data,
+  budget,
 }: {
-  data:
-    | (Prisma.PickEnumerable<
-        Prisma.TransactionGroupByOutputType,
-        "category"[]
-      > & {
-        _sum: {
-          pricing: number | null;
-        };
-      })[]
-    | undefined;
+  data: Awaited<ReturnType<typeof api.transactions.getMonthCategorySummary>>;
+  budget: Awaited<ReturnType<typeof api.budgets.getLatest>>;
 }) => {
   const [expandedRowKeys, setExpandedRowsKeys] = useState<React.Key[]>([]);
 
@@ -29,6 +23,7 @@ const CategorySummaryTable = ({
     key: React.Key;
     name: string;
     total: number | null | undefined;
+    budgeted: number | null | undefined;
   }
 
   const dataSource: DataType[] = categoryTree.map((branch, index) => {
@@ -37,6 +32,9 @@ const CategorySummaryTable = ({
       name: childbranch.label,
       total: data?.find((row) => row.category === childbranch.label)?._sum
         .pricing,
+      budgeted: budget?.categories.find(
+        (row) => row.category == childbranch.label,
+      )?.amount,
     }));
 
     const parentCategoryTotal = childrenTotals
@@ -48,15 +46,27 @@ const CategorySummaryTable = ({
           )
       : data?.find((row) => row.category === branch.label)?._sum.pricing;
 
+    const budgeted = childrenTotals
+      ? childrenTotals
+          ?.map(({ budgeted }) => budgeted)
+          .reduce(
+            (accumulator, currentVal) =>
+              (Number(accumulator) || 0) + (Number(currentVal) || 0),
+          )
+      : budget?.categories.find((row) => row.category === branch.label)?.amount;
+
+    console.log("budget ", budget);
+
     return {
       key: index,
       name: branch.label,
       total: parentCategoryTotal || null,
       children: childrenTotals,
+      budgeted: budgeted || null,
     };
   });
 
-  const columnsFromGuide: TableColumnsType<DataType> = [
+  const columns: TableColumnsType<DataType> = [
     {
       title: "Name",
       dataIndex: "name",
@@ -83,12 +93,13 @@ const CategorySummaryTable = ({
       <DatePicker
         onChange={onChangeMonth}
         picker="month"
+        // maxDate={dayjs()}
         defaultValue={dayjs()}
       />
       <CreateNewBudgetView />
       <Table
         dataSource={dataSource}
-        columns={columnsFromGuide}
+        columns={columns}
         pagination={false}
         expandable={{
           expandedRowKeys,
@@ -128,72 +139,15 @@ const useResetFormOnCloseModal = ({
 const CreateNewBudgetView = () => {
   // const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [budgetTree, setBudgetTree] = useState<
-    (CategoryNode & { amount: number })[]
-  >(
-    categoryTree.map((node) => ({
-      ...node,
-      amount: 0,
-      children: node.children?.map((child) => ({ ...child, amount: 0 })), //! this assumes theres only one layer of children
-    })),
-  );
+  const [startDate, setStartDate] = useState(dayjs().add(1, "month").date(1));
 
   const budgetMap = new Map<string, number>([]);
-
-  function da(
-    categoryTree: typeof budgetTree,
-    setNewTree: (node: (typeof budgetTree)[number]) => void,
-  ) {
-    categoryTree;
-  }
-
-  //! this assumes theres only one layer of children
-  // function updateBudgetTree(category: string, amount: number) {
-  //   let runningBudget: typeof budgetTree = {...budgetTree};
-
-  //   runningBudget.forEach((node) => {
-  //     if (node.label === category) {
-  //       const newBudget = budgetTree
-  //         .filter((searchNode) => searchNode !== node)
-  //         .concat({ ...node, amount });
-
-  //       setBudgetTree(newBudget);
-  //       return;
-
-  //     } else if (node.children) {
-  //       node.children.forEach(childNode => {
-  //         if(childNode.label===category){
-  //           const newBudget = budgetTree
-  //           .filter((searchNode) => searchNode !== node)
-  //           .concat({ ...node, amount: 100, children: node.children?.filter() });
-  //         }
-  //       })
-  //     }
-  //   });
-  // }
-
-  // type FieldType = {
-  //   [category: string]: number;
-  // };
-
-  // const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
-  //   console.log("Success:", values);
-  // };
-
-  // const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-  //   errorInfo,
-  // ) => {
-  //   console.log("Failed:", errorInfo);
-  // };
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
-    // form.submit();
-
     const categories: {
       category: string;
       amount: number;
@@ -206,12 +160,12 @@ const CreateNewBudgetView = () => {
     BudgetActions.createBudget({
       categories,
       current: false,
-      startDate: new Date(Date.now()),
+      startDate: new Date(startDate.valueOf()),
     }).then(() =>
       console.log("created new budget! ", {
         categories,
         current: false,
-        startDate: new Date(Date.now()),
+        startDate: new Date(startDate.valueOf()),
       }),
     );
     setIsModalOpen(false);
@@ -231,10 +185,9 @@ const CreateNewBudgetView = () => {
     console.log("new budget map ", budgetMap);
   }
 
-  // useResetFormOnCloseModal({
-  //   form,
-  //   open: isModalOpen,
-  // });
+  useEffect(() => {
+    console.log("startdate changed: ", startDate.format("MM/YYYY"));
+  }, [startDate]);
 
   return (
     <>
@@ -249,7 +202,12 @@ const CreateNewBudgetView = () => {
           onOk={handleOk}
           onCancel={handleCancel}
         >
-          <p>This will start next month if this isnt your first one</p>
+          <DatePicker
+            picker="month"
+            placeholder="Start month"
+            onChange={setStartDate}
+            value={startDate}
+          />
           {/* <Form
           form={form}
           labelAlign="left"
