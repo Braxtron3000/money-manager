@@ -29,11 +29,11 @@ const CategorySummaryTable = ({
   const dataSource: DataType[] = categoryTree.map((branch, index) => {
     const childrenTotals = branch.children?.map((childbranch, index) => ({
       key: index + " " + index,
-      name: childbranch.label,
-      total: data?.find((row) => row.category === childbranch.label)?._sum
+      name: childbranch.value,
+      total: data?.find((row) => row.category === childbranch.value)?._sum
         .pricing,
       budgeted: budget?.categories.find(
-        (row) => row.category == childbranch.label,
+        (row) => row.category == childbranch.value,
       )?.amount,
     }));
 
@@ -44,7 +44,7 @@ const CategorySummaryTable = ({
             (accumulator, currentVal) =>
               (Number(accumulator) || 0) + (Number(currentVal) || 0),
           )
-      : data?.find((row) => row.category === branch.label)?._sum.pricing;
+      : data?.find((row) => row.category === branch.value)?._sum.pricing;
 
     const budgeted = childrenTotals
       ? childrenTotals
@@ -53,13 +53,11 @@ const CategorySummaryTable = ({
             (accumulator, currentVal) =>
               (Number(accumulator) || 0) + (Number(currentVal) || 0),
           )
-      : budget?.categories.find((row) => row.category === branch.label)?.amount;
-
-    console.log("budget ", budget);
+      : budget?.categories.find((row) => row.category === branch.value)?.amount;
 
     return {
       key: index,
-      name: branch.label,
+      name: branch.value,
       total: parentCategoryTotal || null,
       children: childrenTotals,
       budgeted: budgeted || null,
@@ -227,21 +225,21 @@ const CreateNewBudgetView = () => {
             >
               <Tag
                 color={categoryColors(
-                  branch.label.charAt(0).toUpperCase() + branch.label.slice(1),
+                  branch.value.charAt(0).toUpperCase() + branch.value.slice(1),
                 )}
               >
-                <h2>{branch.label}</h2>
+                <h2>{branch.value}</h2>
               </Tag>
               {/* <Tag color={categoryColors(branch.label)}>{branch.label}</Tag> */}
               {branch.children ? (
                 branch.children.map((child) => (
                   // <Form.Item label={child.label} name={child.label}>
                   <div>
-                    <h2>{child.label}</h2>
+                    <h2>{child.value}</h2>
                     <InputNumber
-                      addonBefore={child.label === "Income" ? "+" : "-"}
+                      addonBefore={child.value === "Income" ? "+" : "-"}
                       addonAfter="$"
-                      onChange={(text) => onChangeText(child.label, text)}
+                      onChange={(text) => onChangeText(child.value, text)}
                     />
                   </div>
                   // </Form.Item>
@@ -249,9 +247,9 @@ const CreateNewBudgetView = () => {
               ) : (
                 // <Form.Item label={branch.label} name={branch.label}>
                 <InputNumber
-                  addonBefore={branch.label === "Income" ? "+" : "-"}
+                  addonBefore={branch.value === "Income" ? "+" : "-"}
                   addonAfter="$"
-                  onChange={(text) => onChangeText(branch.label, text)}
+                  onChange={(text) => onChangeText(branch.value, text)}
                 />
                 // </Form.Item>
               )}

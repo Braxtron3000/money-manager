@@ -44,7 +44,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   interface Option {
     value: string;
-    label: string;
+    // label: string;
     children?: Option[];
   }
   const onChange: CascaderProps<Option>["onChange"] = (value) => {
@@ -62,9 +62,17 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       case "category":
         return (
           <Cascader
-            options={categoryTree}
+            options={categoryTree.map((node) => ({
+              // this map is necessary. type wont show issue without label field but options will appear blank.
+              value: node.value,
+              children: node.children?.map((childNode) => ({
+                value: childNode.value,
+                label: childNode.value,
+              })),
+              label: node.value,
+            }))}
             // expandTrigger="hover"
-            displayRender={(label) => label.join("    ")}
+            displayRender={(value) => value.join("    ")}
             // displayRender={displayRender}
             onChange={onChange}
           />

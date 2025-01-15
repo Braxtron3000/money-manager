@@ -109,23 +109,23 @@ export const purifyDescriptionString = (rawDescription: string) => {
 export const pncCategoryToThisCategory = (pncCategory: string): categories => {
   switch (pncCategory) {
     case "Auto + Gas":
-      return "gasoline";
+      return "Gasoline";
     case "Checks Written":
       return "Uncategorized"; //! checks are by default not actually associated with a category and should be manually changed.
     case "Credit Card Payments":
-      return "credit cards/charge cards";
+      return "Credit cards/charge cards";
     case "Deposits":
       return "Income";
     case "Electronics + Merchandise":
       return "Uncategorized"; //again, this is too general and should have been categorized at this point.
     case "Groceries":
-      return "groceries";
+      return "Groceries";
     case "Healthcare":
       return "Uncategorized"; //too general. should have been categorized at this point.
     case "Paychecks":
       return "Income";
     case "Restaurants":
-      return "restaurants";
+      return "Restaurants";
     case "Securities Trades":
       return "Uncategorized";
     case "Transfers":

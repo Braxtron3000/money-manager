@@ -5,32 +5,32 @@ export type categories =
   | "FICA (social security & medicare)"
   | "Federal"
   | "State & local"
-  | "rent"
-  | "mortgage"
-  | "property taxes"
-  | "gas/electric/oil"
-  | "water/garbage"
-  | "phones"
-  | "tv"
-  | "internet"
-  | "furniture/appliances"
-  | "housekeeper"
-  | "maintenance/repairs"
-  | "groceries"
-  | "restaurants"
-  | "gasoline"
-  | "maintenance/repairs"
-  | "state registration fees"
-  | "tolls/parking"
-  | "public transportation/taxis"
-  | "credit cards/charge cards"
-  | "auto loans"
-  | "student loans"
-  | "other"
-  | "clothing"
-  | "shoes"
-  | "jewelry"
-  | "dry cleaning"
+  | "Rent"
+  | "Mortgage"
+  | "Property taxes"
+  | "Gas/electric/oil"
+  | "Water/garbage"
+  | "Phones"
+  | "Tv"
+  | "Internet"
+  | "Furniture/appliances"
+  | "Housekeeper"
+  | "Maintenance/repairs"
+  | "Groceries"
+  | "Restaurants"
+  | "Gasoline"
+  | "Maintenance/repairs"
+  | "State registration fees"
+  | "Tolls/parking"
+  | "Public transportation/taxis"
+  | "Credit cards/charge cards"
+  | "Auto loans"
+  | "Student loans"
+  | "Other"
+  | "Clothing"
+  | "Shoes"
+  | "Jewelry"
+  | "Dry cleaning"
   | "Entertainment (movies, concerts)"
   | "Vacation & travel"
   | "Gifts"
@@ -39,31 +39,31 @@ export type categories =
   | "Pets"
   | "Other"
   | "Haircuts"
-  | "makeup"
-  | "other"
+  | "Makeup"
+  | "Other"
   | "Accountant/attorney/financial advisor"
-  | "other"
-  | "physicians and hospitals"
-  | "drugs"
-  | "dental and visions"
-  | "therapy"
+  | "Other"
+  | "Physicians and hospitals"
+  | "Drugs"
+  | "Dental and visions"
+  | "Therapy"
   | "Health club or gym"
   | "Homeowners/renter’s"
-  | "auto"
-  | "health"
-  | "life"
-  | "disability"
+  | "Auto"
+  | "Health"
+  | "Life"
+  | "Disability"
   | "Long-term care"
-  | "umbrella liability"
+  | "Umbrella liability"
   | "Tuition"
-  | "books"
-  | "supplies"
-  | "room&board"
-  | "day care"
-  | "toys"
-  | "activities"
-  | "child support"
-  | "charitable donations"
+  | "Books"
+  | "Supplies"
+  | "Room&board"
+  | "Day care"
+  | "Toys"
+  | "Activities"
+  | "Child support"
+  | "Charitable donations"
   | "Uncategorized"
   | "Income"; //Todo: income needs sub incomes such as from investments and gifts.
 //Todo: also add in investment expenses
@@ -72,32 +72,32 @@ export const categoriesList: categories[] = [
   "FICA (social security & medicare)",
   "Federal",
   "State & local",
-  "rent",
-  "mortgage",
-  "property taxes",
-  "gas/electric/oil",
-  "water/garbage",
-  "phones",
-  "tv",
-  "internet",
-  "furniture/appliances",
-  "housekeeper",
-  "maintenance/repairs",
-  "groceries",
-  "restaurants",
-  "gasoline",
-  "maintenance/repairs",
-  "state registration fees",
-  "tolls/parking",
-  "public transportation/taxis",
-  "credit cards/charge cards",
-  "auto loans",
-  "student loans",
-  "other",
-  "clothing",
-  "shoes",
-  "jewelry",
-  "dry cleaning",
+  "Rent",
+  "Mortgage",
+  "Property taxes",
+  "Gas/electric/oil",
+  "Water/garbage",
+  "Phones",
+  "Tv",
+  "Internet",
+  "Furniture/appliances",
+  "Housekeeper",
+  "Maintenance/repairs",
+  "Groceries",
+  "Restaurants",
+  "Gasoline",
+  "Maintenance/repairs",
+  "State registration fees",
+  "Tolls/parking",
+  "Public transportation/taxis",
+  "Credit cards/charge cards",
+  "Auto loans",
+  "Student loans",
+  "Other",
+  "Clothing",
+  "Shoes",
+  "Jewelry",
+  "Dry cleaning",
   "Entertainment (movies, concerts)",
   "Vacation & travel",
   "Gifts",
@@ -106,31 +106,30 @@ export const categoriesList: categories[] = [
   "Pets",
   "Other",
   "Haircuts",
-  "makeup",
-  "other",
+  "Makeup",
+  "Other",
   "Accountant/attorney/financial advisor",
-  "other",
-  "physicians and hospitals",
-  "drugs",
-  "dental and visions",
-  "therapy",
+  "Physicians and hospitals",
+  "Drugs",
+  "Dental and visions",
+  "Therapy",
   "Health club or gym",
   "Homeowners/renter’s",
-  "auto",
-  "health",
-  "life",
-  "disability",
+  "Auto",
+  "Health",
+  "Life",
+  "Disability",
   "Long-term care",
-  "umbrella liability",
+  "Umbrella liability",
   "Tuition",
-  "books",
-  "supplies",
-  "room&board",
-  "day care",
-  "toys",
-  "activities",
-  "child support",
-  "charitable donations",
+  "Books",
+  "Supplies",
+  "Room&board",
+  "Day care",
+  "Toys",
+  "Activities",
+  "Child support",
+  "Charitable donations",
   "Uncategorized",
   "Income",
 ] as const;
@@ -140,172 +139,150 @@ export function isCategory(string: string): string is categories {
 }
 
 export interface CategoryNode {
-  value: string; // value and label should be typed to correlate with category type.
-  label: string;
+  value: Capitalize<string>; // value and label should be typed to correlate with category type.
   children?: CategoryNode[];
 }
 
 export const categoryTree: CategoryNode[] = [
   {
     value: "Taxes",
-    label: "Taxes",
     children: [
       {
         value: "FICA (social security & medicare)",
-        label: "FICA (social security & medicare)",
       },
-      { value: "Federal", label: "Federal" },
-      { value: "State & local", label: "State & local" },
+      { value: "Federal" },
     ],
   },
   {
     value: "Housing",
-    label: "Housing",
     children: [
-      { value: "rent", label: "rent" },
-      { value: "mortgage", label: "mortgage" },
-      { value: "property taxes", label: "property taxes" },
-      { value: "gas/electric/oil", label: "gas/electric/oil" },
-      { value: "water/garbage", label: "water/garbage" },
-      { value: "phones", label: "phones" },
-      { value: "tv", label: "tv" },
-      { value: "internet", label: "internet" },
-      { value: "furniture/appliances", label: "furniture/appliances" },
-      { value: "housekeeper", label: "housekeeper" },
-      { value: "maintenance/repairs", label: "maintenance/repairs" },
+      { value: "Rent" },
+      { value: "Mortgage" },
+      { value: "Property taxes" },
+      { value: "Gas/electric/oil" },
+      { value: "Water/garbage" },
+      { value: "Phones" },
+      { value: "Tv" },
+      { value: "Internet" },
+      { value: "Furniture/appliances" },
+      { value: "Housekeeper" },
+      { value: "Maintenance/repairs" },
     ],
   },
   {
     value: "Food",
-    label: "Food",
-    children: [
-      { value: "groceries", label: "groceries" },
-      { value: "restaurants", label: "restaurants" },
-    ],
+    children: [{ value: "Groceries" }, { value: "Restaurants" }],
   },
   {
     value: "Transportation",
-    label: "Transportation",
     children: [
-      { value: "gasoline", label: "gasoline" },
-      { value: "maintenance/repairs", label: "maintenance/repairs" },
-      { value: "state registration fees", label: "state registration fees" },
-      { value: "tolls/parking", label: "tolls/parking" },
+      { value: "Gasoline" },
+      { value: "Maintenance/repairs" },
+      { value: "State registration fees" },
+      { value: "Tolls/parking" },
       {
-        value: "public transportation/taxis",
-        label: "public transportation/taxis",
+        value: "Public transportation/taxis",
       },
     ],
   },
   {
     value: "Debt repayments",
-    label: "Debt repayments",
     children: [
       {
-        value: "credit cards/charge cards",
-        label: "credit cards/charge cards",
+        value: "Credit cards/charge cards",
       },
       {
-        value: "auto loans",
-        label: "auto loans",
+        value: "Auto loans",
       },
-      { value: "student loans", label: "student loans" },
-      { value: "other", label: "other" },
+      { value: "Student loans" },
+      { value: "Other" },
     ],
   },
   {
     value: "Attire",
-    label: "Attire",
     children: [
-      { value: "clothing", label: "clothing" },
-      { value: "shoes", label: "shoes" },
-      { value: "jewelry", label: "jewelry" },
-      { value: "dry cleaning", label: "dry cleaning" },
+      { value: "Clothing" },
+      { value: "Shoes" },
+      { value: "Jewelry" },
+      { value: "Dry cleaning" },
     ],
   },
   {
     value: "Fun stuff",
-    label: "Fun stuff",
     children: [
       {
         value: "Entertainment (movies, concerts)",
-        label: "Entertainment (movies, concerts)",
       },
-      { value: "Vacation & travel", label: "Vacation & travel" },
-      { value: "Gifts", label: "Gifts" },
-      { value: "Hobbies", label: "Hobbies" },
-      { value: "Subscription/memberships", label: "Subscription/memberships" },
-      { value: "Pets", label: "Pets" },
-      { value: "Other", label: "Other" },
+      { value: "Vacation & travel" },
+      { value: "Gifts" },
+      { value: "Hobbies" },
+      { value: "Subscription/memberships" },
+      { value: "Pets" },
+      { value: "Other" },
     ],
   },
   {
     value: "Personal care",
-    label: "Personal care",
-    children: [
-      { value: "Haircuts", label: "Haircuts" },
-      { value: "makeup", label: "makeup" },
-      { value: "other", label: "other" },
-    ],
+
+    children: [{ value: "Haircuts" }, { value: "Makeup" }, { value: "Other" }],
   },
   {
     value: "Personal business",
-    label: "Personal business",
+
     children: [
       {
         value: "Accountant/attorney/financial advisor",
-        label: "Accountant/attorney/financial advisor",
       },
-      { value: "other", label: "other" },
+      { value: "Other" },
     ],
   },
   {
     value: "Health Care",
-    label: "Health Care",
+
     children: [
-      { value: "physicians and hospitals", label: "physicians and hospitals" },
-      { value: "drugs", label: "drugs" },
-      { value: "dental and visions", label: "dental and visions" },
-      { value: "therapy", label: "therapy" },
-      { value: "Health club or gym", label: "Health club or gym" },
+      { value: "Physicians and hospitals" },
+      { value: "Drugs" },
+      { value: "Dental and visions" },
+      { value: "Therapy" },
+      { value: "Health club or gym" },
     ],
   },
   {
     value: "Insurance",
-    label: "Insurance",
+
     children: [
-      { value: "Homeowners/renter’s", label: "Homeowners/renter’s" },
-      { value: "auto", label: "auto" },
-      { value: "health", label: "health" },
-      { value: "life", label: "life" },
-      { value: "disability", label: "disability" },
-      { value: "Long-term care", label: "Long-term care" },
-      { value: "umbrella liability", label: "umbrella liability" },
+      { value: "Homeowners/renter’s" },
+      { value: "Auto" },
+      { value: "Health" },
+      { value: "Life" },
+      { value: "Disability" },
+      { value: "Long-term care" },
+      { value: "Umbrella liability" },
     ],
   },
   {
     value: "Education",
-    label: "Education",
+
     children: [
-      { value: "Tuition", label: "Tuition" },
-      { value: "books", label: "books" },
-      { value: "supplies", label: "supplies" },
-      { value: "room&board", label: "room&board" },
+      { value: "Tuition" },
+      { value: "Books" },
+      { value: "Supplies" },
+      { value: "Room&board" },
     ],
   },
   {
     value: "Children",
-    label: "Children",
+
     children: [
-      { value: "day care", label: "day care" },
-      { value: "toys", label: "toys" },
-      { value: "activities", label: "activities" },
-      { value: "child support", label: "child support" },
-      { value: "charitable donations", label: "charitable donations" },
+      { value: "Day care" },
+      { value: "Toys" },
+      { value: "Activities" },
+      { value: "Child support" },
+      { value: "Charitable donations" },
     ],
   },
-  { value: "Uncategorized", label: "Uncategorized" },
-  { value: "Income", label: "Income" }, //Todo: Income should have children.
+  { value: "Uncategorized" },
+  { value: "Income" }, //Todo: Income should have children.
 ];
 
 export type transaction = {
