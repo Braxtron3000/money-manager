@@ -6,18 +6,24 @@ import type { DatePickerProps } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { CategoryNode, categoryTree } from "~/types";
 import { categoryColors } from "../util/parsingUtil";
-import * as BudgetActions from "../actions/budgetActions";
 import dayjs from "dayjs";
 import { api } from "~/trpc/server";
+import * as TransactionActions from "../actions/transactionActions";
+import * as BudgetActions from "../actions/budgetActions";
 
 const CategorySummaryTable = ({
-  data,
-  budget,
+  dataProp,
+  budgetProp,
 }: {
-  data: Awaited<ReturnType<typeof api.transactions.getMonthCategorySummary>>;
-  budget: Awaited<ReturnType<typeof api.budgets.getLatest>>;
+  dataProp: Awaited<
+    ReturnType<typeof TransactionActions.getMonthCategorySummary>
+  >;
+  budgetProp: Awaited<ReturnType<typeof api.budgets.getLatest>> | undefined;
 }) => {
   const [expandedRowKeys, setExpandedRowsKeys] = useState<React.Key[]>([]);
+  const [data, setData] = useState(dataProp);
+
+  const [budget, setBudget] = useState(budgetProp);
 
   interface DataType {
     key: React.Key;
@@ -82,8 +88,31 @@ const CategorySummaryTable = ({
     },
   ];
 
-  const onChangeMonth: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+  const [date, setDate] = useState(dayjs());
+
+  const onChangeMonth: DatePickerProps["onChange"] = (
+    dateParam,
+    dateString,
+  ) => {
+    const newDateParams = {
+      month: dateParam.month() + 1,
+      year: dateParam.year(),
+    };
+    console.log("onchangemonth ", newDateParams);
+
+    TransactionActions.getMonthCategorySummary(newDateParams).then((result) => {
+      if (result) {
+        setData(result);
+      } else console.log("no transactions for ", newDateParams);
+    });
+
+    BudgetActions.getLatest(newDateParams).then((result) => {
+      if (result) {
+        setBudget(result);
+      } else console.log("no budgets for ", newDateParams);
+    });
+
+    setDate(dateParam);
   };
 
   return (
@@ -91,8 +120,8 @@ const CategorySummaryTable = ({
       <DatePicker
         onChange={onChangeMonth}
         picker="month"
-        // maxDate={dayjs()}
-        defaultValue={dayjs()}
+        value={date}
+        allowClear={false}
       />
       <CreateNewBudgetView />
       <Table
@@ -116,26 +145,7 @@ const CategorySummaryTable = ({
 
 export default CategorySummaryTable;
 
-const useResetFormOnCloseModal = ({
-  form,
-  open,
-}: {
-  form: FormInstance;
-  open: boolean;
-}) => {
-  const prevOpenRef = useRef<boolean>(null);
-
-  const prevOpen = prevOpenRef.current;
-
-  useEffect(() => {
-    if (!open && prevOpen) {
-      form.resetFields();
-    }
-  }, [form, prevOpen, open]);
-};
-
 const CreateNewBudgetView = () => {
-  // const [form] = Form.useForm();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [startDate, setStartDate] = useState(dayjs().add(1, "month").date(1));
 
@@ -205,19 +215,9 @@ const CreateNewBudgetView = () => {
             placeholder="Start month"
             onChange={setStartDate}
             value={startDate}
+            allowClear={false}
           />
-          {/* <Form
-          form={form}
-          labelAlign="left"
-          onFinish={onFinish}
-          preserve={false}
-          onFinishFailed={onFinishFailed}
-        > */}
-          {/* <Carousel
-          style={{ backgroundColor: "slategrey", borderRadius: 4 }}
-          infinite={false}
-          arrows
-        > */}
+
           {categoryTree.map((branch, index) => (
             <Card
               key={index}
@@ -230,10 +230,8 @@ const CreateNewBudgetView = () => {
               >
                 <h2>{branch.value}</h2>
               </Tag>
-              {/* <Tag color={categoryColors(branch.label)}>{branch.label}</Tag> */}
               {branch.children ? (
                 branch.children.map((child) => (
-                  // <Form.Item label={child.label} name={child.label}>
                   <div>
                     <h2>{child.value}</h2>
                     <InputNumber
@@ -242,22 +240,16 @@ const CreateNewBudgetView = () => {
                       onChange={(text) => onChangeText(child.value, text)}
                     />
                   </div>
-                  // </Form.Item>
                 ))
               ) : (
-                // <Form.Item label={branch.label} name={branch.label}>
                 <InputNumber
                   addonBefore={branch.value === "Income" ? "+" : "-"}
                   addonAfter="$"
                   onChange={(text) => onChangeText(branch.value, text)}
                 />
-                // </Form.Item>
               )}
             </Card>
           ))}
-
-          {/* </Carousel> */}
-          {/* </Form> */}
         </Modal>
       )}
     </>

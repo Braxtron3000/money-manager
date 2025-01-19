@@ -8,6 +8,8 @@ import FullHeader from "./_components/header/Fullheader";
 import { Card, DatePicker, Layout, Space } from "antd";
 import { Content } from "antd/es/layout/layout";
 import CategorySummaryTable from "./_components/CategorySummaryTable";
+import * as BudgetActions from "./actions/budgetActions";
+import * as TransactionActions from "./actions/transactionActions";
 
 export default async function Home() {
   const session = await getServerAuthSession();
@@ -18,16 +20,17 @@ export default async function Home() {
           
           </main> */
   }
-  // const today = new Date();
+  const today = new Date();
 
-  const categorieSummaries = session
-    ? await api.transactions.getMonthCategorySummary({
-        month: 2,
-        year: 2024,
-      })
-    : [];
+  const categorieSummaries = await TransactionActions.getMonthCategorySummary({
+    month: today.getMonth() + 1,
+    year: today.getFullYear(),
+  });
 
-  const somethingElse = await api.budgets.getLatest(null);
+  const somethingElse = await BudgetActions.getLatest({
+    month: today.getMonth() + 1,
+    year: today.getFullYear(),
+  });
 
   console.log("something else ", somethingElse);
 
@@ -43,16 +46,10 @@ export default async function Home() {
                 size="middle"
                 style={{ display: "flex" }}
               >
-                {/* {categorieSummaries.map((bah) => (
-                <div>
-                <h1>{bah.category}</h1>
-                <h1>{bah._sum.pricing}</h1>
-                </div>
-                ))} */}
                 <Card title="Category Summaries">
                   <CategorySummaryTable
-                    data={categorieSummaries}
-                    budget={somethingElse}
+                    dataProp={categorieSummaries}
+                    budgetProp={somethingElse}
                   />
                 </Card>
               </Space>

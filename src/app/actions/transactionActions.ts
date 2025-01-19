@@ -5,18 +5,18 @@ import { isCategory, transaction } from "~/types";
 import dayjs from "dayjs";
 
 export async function addTransactions(transactions: transaction[]) {
-  "use server";
   try {
     console.log("adding transactions to db");
     const session = await getServerAuthSession(); //!Todo: whats going on here.
-
-    api.transactions.createTransactions(
-      transactions.map((transaction) => ({
-        ...transaction,
-        createdById: session?.user.id ?? "",
-        date: new Date(transaction.date.valueOf()),
-      })),
-    );
+    if (session) {
+      api.transactions.createTransactions(
+        transactions.map((transaction) => ({
+          ...transaction,
+          createdById: session?.user.id ?? "",
+          date: new Date(transaction.date.valueOf()),
+        })),
+      );
+    } else throw Error("You must be signed in to perform this action");
   } catch (error) {
     console.error("problem adding Transactions to db ", error);
   }
@@ -24,6 +24,11 @@ export async function addTransactions(transactions: transaction[]) {
 
 export async function getTransactions(): Promise<transaction[]> {
   const session = await getServerAuthSession();
+
+  if (!session) {
+    throw Error("You must be signed in to perform this action");
+  }
+
   const fetchedTransactions = api.transactions.getTransactions({
     userId: session?.user.id ?? "",
   });
@@ -41,7 +46,11 @@ export async function getTransactions(): Promise<transaction[]> {
 }
 
 export async function deleteTransactions(transactionIds: string[]) {
-  "use server";
+  const session = await getServerAuthSession();
+
+  if (!session) {
+    throw Error("You must be signed in to perform this action");
+  }
 
   try {
     api.transactions.deleteTransactions(transactionIds);
@@ -52,6 +61,12 @@ export async function deleteTransactions(transactionIds: string[]) {
 }
 
 export async function editTransaction(transaction: transaction) {
+  const session = await getServerAuthSession();
+
+  if (!session) {
+    throw Error("You must be signed in to perform this action");
+  }
+
   try {
     console.log("updating transaction ", transaction);
     api.transactions.editTransaction({
@@ -67,6 +82,12 @@ export async function editTransaction(transaction: transaction) {
 export async function getMonthCategorySummary(
   monthYear: Parameters<typeof api.transactions.getMonthCategorySummary>[0],
 ) {
+  const session = await getServerAuthSession();
+
+  if (!session) {
+    throw Error("You must be signed in to perform this action");
+  }
+
   try {
     return api.transactions.getMonthCategorySummary(monthYear);
   } catch (error) {

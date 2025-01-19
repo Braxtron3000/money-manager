@@ -2,6 +2,7 @@ import { deleteTransactions } from "~/app/actions/transactionActions";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { transaction } from "~/types";
+import dayjs from "dayjs";
 
 const returnIdlessTransactionBody = (transaction: transaction) => {
   const { id, ...rest } = transaction;
@@ -101,16 +102,25 @@ export const transactionsRouter = createTRPCRouter({
       }
 
       thisMonthDisplay =
-        input.month >= 10 ? input.toString() : "0" + input.month;
+        input.month >= 10 ? input.month.toString() : "0" + input.month;
+
+      const greaterThanDateString = `${input.year}-${thisMonthDisplay}-01T00:00:00Z`;
+      const lessThanDateString = `${nextMonthDisplay == "01" ? input.year + 1 : input.year}-${nextMonthDisplay}-01T00:00:00Z`;
+
+      console.log("get month category summery ", {
+        inputMonth: input.month,
+        inputYear: input.year,
+        nextMonthDisplay,
+        greaterThanDateString,
+        lessThanDateString,
+      });
 
       /*${ nextMonthDisplay == "01" ? input.year + 1 :  input.year} */
       return ctx.db.transaction.groupBy({
         where: {
           date: {
-            gte: new Date(`${input.year}-${thisMonthDisplay}-01T00:00:00Z`),
-            lt: new Date(
-              `${nextMonthDisplay == "01" ? input.year + 1 : input.year}-${nextMonthDisplay}-01T00:00:00Z`,
-            ),
+            gte: new Date(greaterThanDateString),
+            lt: new Date(lessThanDateString),
           },
         },
         by: ["category"],

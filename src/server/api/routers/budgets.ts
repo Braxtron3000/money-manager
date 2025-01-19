@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { z } from "zod";
 
 import {
@@ -32,30 +33,66 @@ export const budgetsRouter = createTRPCRouter({
       // simulate a slow db call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      return ctx.db.budget.create({
-        data: {
+      console.log("input startdate ", input.startDate);
+      input.startDate.setUTCHours(0, 0, 0, 0);
+      console.log("input startdate ", input.startDate);
+      // ctx.db.budget
+      //   .deleteMany({
+      //     where: {
+      //       startDate: {
+      //         gte: new Date(dayjs(input.startDate).startOf("day").valueOf()),
+      //         lt: new Date(dayjs(input.startDate).endOf("day").valueOf()),
+      //       },
+      //     },
+      //   })
+      //   .then((ra) => console.log("rarara: ", ra));
+
+      return ctx.db.budget.upsert({
+        where: {
+          startDate: input.startDate,
+        },
+        create: {
           current: input.current,
           startDate: input.startDate,
           createdBy: { connect: { id: ctx.session.user.id } },
           categories: { create: input.categories },
         },
+        update: {},
         include: {
           categories: true,
         },
       });
+
+      // return ctx.db.budget.create({
+      //   data: {
+      //     current: input.current,
+      //     startDate: input.startDate,
+      //     createdBy: { connect: { id: ctx.session.user.id } },
+      //     categories: { create: input.categories },
+      //   },
+      //   include: {
+      //     categories: true,
+      //   },
+      // });
     }),
 
   getLatest: protectedProcedure
     .input(z.object({ month: z.number(), year: z.number() }).nullable())
     .query(({ ctx, input }) => {
+      const lessthanDateString = input
+        ? `${input.year}-${input.month >= 10 ? input.month : "0" + input.month}-01T00:00:00Z`
+        : undefined;
+
+      console.log("getting latest ", {
+        month: input?.month,
+        year: input?.year,
+        lessthanDateString,
+      });
+
       return ctx.db.budget.findFirst({
         where: {
           startDate: {
-            lte: input
-              ? new Date(
-                  `${input.year}-${input.month >= 10 ? input.month : "0" + input.month}-01T00:00:00Z`,
-                )
-              : new Date(),
+            lt: lessthanDateString ? new Date(lessthanDateString) : new Date(),
           },
         },
         orderBy: {

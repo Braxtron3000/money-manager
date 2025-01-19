@@ -87,7 +87,7 @@ model Transaction {
 
 model Budget {
   id String @id @default(cuid())
-  startDate DateTime //if the date is in the future its a new budget other wise if theres nothing more recent this is the current budget.
+  startDate DateTime @unique  //if the date is in the future its a new budget other wise if theres nothing more recent this is the current budget.
   current Boolean //this just makes things easier to query
   createdBy User @relation(fields: [createdById], references: [id])
   createdById String

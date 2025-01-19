@@ -2,34 +2,38 @@
 
 import { Menu, MenuProps, theme } from "antd";
 import { AreaChartOutlined, TableOutlined } from "@ant-design/icons";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const SimpleNavMenu = ({ disabled }: { disabled: boolean }) => {
   const router = useRouter();
+  const pathname = usePathname();
 
   type MenuItem = Required<MenuProps>["items"][number];
   const items: MenuItem[] = [
     {
       label: "Dashboard",
-      key: "Dashboard",
+      key: "/",
       icon: <AreaChartOutlined />,
       disabled,
-      onClick: () => router.replace("/"),
+      onClick: function () {
+        router.replace("/");
+      },
     },
     {
       label: "Transactions",
-      key: "transactions",
+      key: "/transactions",
       icon: <TableOutlined />,
       disabled,
-      onClick: () => router.replace("/transactions"),
+      onClick: function () {
+        router.replace("/transactions");
+      },
     },
   ];
 
   return (
     <Menu
       mode="horizontal"
-      // theme={theme.darkAlgorithm}
-      // color={}
+      selectedKeys={[pathname]}
       theme="dark"
       items={items}
       style={{ flex: 1, minWidth: 0, backgroundColor: "transparent" }}
