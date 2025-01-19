@@ -2,6 +2,7 @@ import { deleteTransactions } from "~/app/actions/transactionActions";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { transaction } from "~/types";
+import dayjs from "dayjs";
 
 const returnIdlessTransactionBody = (transaction: transaction) => {
   const { id, ...rest } = transaction;
@@ -77,6 +78,55 @@ export const transactionsRouter = createTRPCRouter({
           id: input.id,
         },
         data: rest,
+      });
+    }),
+  getMonthCategorySummary: protectedProcedure
+    .input(
+      z.object({
+        month: z.number(),
+        year: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      let nextMonthDisplay: string;
+      let thisMonthDisplay: string;
+
+      if (input.month == 12) {
+        nextMonthDisplay = "01";
+      } else {
+        const nextmonthnumber = input.month + 1;
+        nextMonthDisplay =
+          nextmonthnumber >= 10
+            ? nextmonthnumber.toString()
+            : "0" + nextmonthnumber;
+      }
+
+      thisMonthDisplay =
+        input.month >= 10 ? input.month.toString() : "0" + input.month;
+
+      const greaterThanDateString = `${input.year}-${thisMonthDisplay}-01T00:00:00Z`;
+      const lessThanDateString = `${nextMonthDisplay == "01" ? input.year + 1 : input.year}-${nextMonthDisplay}-01T00:00:00Z`;
+
+      console.log("get month category summery ", {
+        inputMonth: input.month,
+        inputYear: input.year,
+        nextMonthDisplay,
+        greaterThanDateString,
+        lessThanDateString,
+      });
+
+      /*${ nextMonthDisplay == "01" ? input.year + 1 :  input.year} */
+      return ctx.db.transaction.groupBy({
+        where: {
+          date: {
+            gte: new Date(greaterThanDateString),
+            lt: new Date(lessThanDateString),
+          },
+        },
+        by: ["category"],
+        _sum: {
+          pricing: true,
+        },
       });
     }),
 });

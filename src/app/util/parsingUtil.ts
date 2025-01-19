@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 import {
+  categories,
+  categoryTree,
   CreditCSVTransaction,
   CSVTransaction,
   DebitCSVTransaction,
@@ -36,8 +38,8 @@ export const convertCSVTransaction = (
     csvTransaction.Description,
   );
   const category = isDebitCSVTransaction(csvTransaction)
-    ? csvTransaction.Category
-    : "Debt repayments / credit cards/charge cards";
+    ? pncCategoryToThisCategory(csvTransaction.Category)
+    : "credit cards/charge cards";
 
   const key = index.toString();
 
@@ -98,7 +100,92 @@ export const purifyDescriptionString = (rawDescription: string) => {
     return rawDescription
       .replaceAll(ACH_CREDIT, "")
       .replace(/\b\w*\d\w*\b/, ""); //the replace here is not global and gets rid of the first word with numbers in it.
-  }
+  } else console.error("displaying rawDescription");
 
   return rawDescription;
+};
+
+//switch is here to show all pnc categories are correctly categorized.
+export const pncCategoryToThisCategory = (pncCategory: string): categories => {
+  switch (pncCategory) {
+    case "Auto + Gas":
+      return "Gasoline";
+    case "Checks Written":
+      return "Uncategorized"; //! checks are by default not actually associated with a category and should be manually changed.
+    case "Credit Card Payments":
+      return "Credit cards/charge cards";
+    case "Deposits":
+      return "Income";
+    case "Electronics + Merchandise":
+      return "Uncategorized"; //again, this is too general and should have been categorized at this point.
+    case "Groceries":
+      return "Groceries";
+    case "Healthcare":
+      return "Uncategorized"; //too general. should have been categorized at this point.
+    case "Paychecks":
+      return "Income";
+    case "Restaurants":
+      return "Restaurants";
+    case "Securities Trades":
+      return "Uncategorized";
+    case "Transfers":
+      return "Uncategorized";
+    default:
+      return "Uncategorized";
+  }
+};
+
+export const categoryToTreeValue = (category: string): string => {
+  return category
+    .substring(category.lastIndexOf("/") + 1)
+    .trim()
+    .replace(/^./, (char) => char.toUpperCase());
+};
+
+export const categoryColors = (category: string) => {
+  const majorCategory = categoryTree.find((branch) => {
+    return branch.children?.some((e) => e.value === category);
+  }); //!this assumes that the tree is only one level deep which is fine for now.
+
+  // console.error("majorCategory ", majorCategory, "cateogry " + category);
+
+  if (majorCategory?.value == "Taxes" || category == "Taxes") return "blue";
+  else if (majorCategory?.value == "Housing" || category == "Housing")
+    return "HotPink";
+  else if (majorCategory?.value == "Food" || category == "Food")
+    return "purple";
+  else if (
+    majorCategory?.value == "Transportation" ||
+    category == "Transportation"
+  )
+    return "red";
+  else if (
+    majorCategory?.value == "Debt repayments" ||
+    category === "Debt repayments"
+  )
+    return "MediumAquamarine";
+  else if (majorCategory?.value == "Attire" || category === "Attire")
+    return "turquoise";
+  else if (majorCategory?.value == "Fun stuff" || category === "Fun stuff")
+    return "pink";
+  else if (majorCategory?.value == "Personal" || category === "Fun stuff")
+    return "DeepSkyBlue";
+  else if (
+    majorCategory?.value == "Personal business" ||
+    category === "Fun stuff"
+  )
+    return "teal";
+  else if (majorCategory?.value == "Health Care" || category === "Health Care")
+    return "royalblue";
+  else if (majorCategory?.value == "Insurance" || category === "Insurance")
+    return "darkorange";
+  else if (majorCategory?.value == "Education" || category === "Education")
+    return "mediumaquamarine";
+  else if (majorCategory?.value == "Children" || category === "Children")
+    return "forestGreen";
+  else if (
+    majorCategory?.value == "Uncategorized" ||
+    category === "Uncategorized"
+  )
+    return "maroon";
 };

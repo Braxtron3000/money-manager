@@ -64,6 +64,7 @@ model User {
   sessions      Session[]
   posts         Post[]
   Transaction   Transaction[]
+  Budget Budget[]
 }
 
 model VerificationToken {
@@ -82,4 +83,21 @@ model Transaction {
   date        DateTime
   createdBy   User     @relation(fields: [createdById], references: [id])
   createdById String
+}
+
+model Budget {
+  id String @id @default(cuid())
+  startDate DateTime @unique  //if the date is in the future its a new budget other wise if theres nothing more recent this is the current budget.
+  current Boolean //this just makes things easier to query
+  createdBy User @relation(fields: [createdById], references: [id])
+  createdById String
+  categories  BudgetCategory[]
+}
+
+model BudgetCategory {
+  id String @id @default(cuid())
+  budgetId String
+  budgetIdRelation Budget @relation(fields: [budgetId],references: [id])
+  category String
+  amount Int
 }

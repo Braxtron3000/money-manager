@@ -19,6 +19,7 @@ import { ColumnsType } from "antd/es/table";
 import * as transactionActions from "../actions/transactionActions";
 import { api, RouterInputs, type ReactQueryOptions } from "~/trpc/react";
 import { describe } from "node:test";
+import { categoryColors } from "../util/parsingUtil";
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
@@ -43,7 +44,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   interface Option {
     value: string;
-    label: string;
+    // label: string;
     children?: Option[];
   }
   const onChange: CascaderProps<Option>["onChange"] = (value) => {
@@ -61,9 +62,17 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       case "category":
         return (
           <Cascader
-            options={categoryTree}
+            options={categoryTree.map((node) => ({
+              // this map is necessary. type wont show issue without label field but options will appear blank.
+              value: node.value,
+              children: node.children?.map((childNode) => ({
+                value: childNode.value,
+                label: childNode.value,
+              })),
+              label: node.value,
+            }))}
             // expandTrigger="hover"
-            displayRender={(label) => label.join("    ")}
+            displayRender={(value) => value.join("    ")}
             // displayRender={displayRender}
             onChange={onChange}
           />
@@ -162,24 +171,6 @@ function EditableTable({
     }
   };
 
-  const categoryColors = (category: string) => {
-    // type mainCategories = 'Taxes' | 'Housing'|'Food'|'Transportation''Debt repayments'
-
-    if (category.includes("Taxes")) return "blue";
-    else if (category.includes("Housing")) return "HotPink";
-    else if (category.includes("Food")) return "purple";
-    else if (category.includes("Transportation")) return "volcanoe";
-    else if (category.includes("Debt repayments")) return "MediumAquamarine";
-    else if (category.includes("Attire")) return "turquoise";
-    else if (category.includes("Fun stuff")) return "pink";
-    else if (category.includes("Personal")) return "DeepSkyBlue";
-    else if (category.includes("Personal business")) return "teal";
-    else if (category.includes("Health Care")) return "royalblue";
-    else if (category.includes("Insurance")) return "darkorange";
-    else if (category.includes("Education")) return "mediumaquamarine";
-    else if (category.includes("Children")) return "lawngreen";
-    else if (category.includes("Uncategorized")) return "maroon";
-  };
   const [notiicationApi, contextHolder] = notification.useNotification();
 
   const handleDelete = (key: React.Key) => {

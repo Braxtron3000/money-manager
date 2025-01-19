@@ -4,56 +4,83 @@ import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/trpc/server";
 import SideBarHeaderLayout from "./_components/SidebarHeaderLayout";
 import { CreatePost } from "./_components/Create-post";
-import { useEffect } from "react";
+import FullHeader from "./_components/header/Fullheader";
+import { Card, DatePicker, Layout, Space } from "antd";
+import { Content } from "antd/es/layout/layout";
+import CategorySummaryTable from "./_components/CategorySummaryTable";
+import * as BudgetActions from "./actions/budgetActions";
+import * as TransactionActions from "./actions/transactionActions";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
   const session = await getServerAuthSession();
 
-  return (
-    <SideBarHeaderLayout title="Dashboard" showHeader>
-      <main className="flex min-h-screen flex-grow flex-col items-center justify-center bg-gradient-to-b from-[#4FB0C6] to-[#4F86C6] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
+  //the gradients pretty cool im keeping this here for the time being
+  {
+    /* <main className="flex min-h-screen flex-grow flex-col items-center justify-center bg-gradient-to-b from-[#4FB0C6] to-[#4F86C6] text-white">
+          
+          </main> */
+  }
+  const today = new Date();
 
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              <Link
-                href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
+  const categorieSummaries = await TransactionActions.getMonthCategorySummary({
+    month: today.getMonth() + 1,
+    year: today.getFullYear(),
+  });
+
+  const somethingElse = await BudgetActions.getLatest({
+    month: today.getMonth() + 1,
+    year: today.getFullYear(),
+  });
+
+  console.log("something else ", somethingElse);
+
+  return (
+    <body>
+      <main className="flex min-h-screen flex-grow flex-col">
+        <Layout>
+          <FullHeader />
+          {session ? (
+            <Content>
+              <Space
+                direction="vertical"
+                size="middle"
+                style={{ display: "flex" }}
               >
-                {session ? "Sign out" : "Sign in"}
-              </Link>
-            </div>
-          </div>
-
-          <CrudShowcase />
-        </div>
+                <Card title="Category Summaries">
+                  <CategorySummaryTable
+                    dataProp={categorieSummaries}
+                    budgetProp={somethingElse}
+                  />
+                </Card>
+              </Space>
+            </Content>
+          ) : (
+            <h1>
+              What is this website? I'll tell you later. For right now, click
+              the sign in button in the top right
+            </h1>
+          )}
+        </Layout>
       </main>
-    </SideBarHeaderLayout>
+    </body>
   );
 }
 
-async function CrudShowcase() {
-  const session = await getServerAuthSession();
-  if (!session?.user) return null;
+// async function CrudShowcase() {
+//   const session = await getServerAuthSession();
+//   if (!session?.user) return null;
 
-  const latestPost = await api.post.getLatest();
+//   const latestPost = await api.post.getLatest();
 
-  return (
-    <div className="w-full max-w-xs">
-      {latestPost ? (
-        <p className="truncate">Your most recent post: {latestPost.name}</p>
-      ) : (
-        <p>You have no posts yet.</p>
-      )}
+//   return (
+//     <div className="w-full max-w-xs">
+//       {latestPost ? (
+//         <p className="truncate">Your most recent post: {latestPost.name}</p>
+//       ) : (
+//         <p>You have no posts yet.</p>
+//       )}
 
-      <CreatePost />
-    </div>
-  );
-}
+//       <CreatePost />
+//     </div>
+//   );
+// }
