@@ -15,7 +15,7 @@ export async function createBudget(
     } catch (error) {
       console.error("error creating budget ", error);
     }
-  } else throw new Error("You must be signed in to perform this action");
+  } else console.warn("You must be signed in to perform this action");
 }
 
 export async function getLatest(
@@ -30,5 +30,5 @@ export async function getLatest(
     } catch (error) {
       console.error("error creating budget ", error);
     }
-  } else throw new Error("You must be signed in to perform this action");
+  } else console.warn("You must be signed in to perform this action");
 }

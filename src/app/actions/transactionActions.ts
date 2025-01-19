@@ -16,7 +16,7 @@ export async function addTransactions(transactions: transaction[]) {
           date: new Date(transaction.date.valueOf()),
         })),
       );
-    } else throw Error("You must be signed in to perform this action");
+    } else console.warn("You must be signed in to perform this action");
   } catch (error) {
     console.error("problem adding Transactions to db ", error);
   }
@@ -26,7 +26,8 @@ export async function getTransactions(): Promise<transaction[]> {
   const session = await getServerAuthSession();
 
   if (!session) {
-    throw Error("You must be signed in to perform this action");
+    console.warn("You must be signed in to perform this action");
+    return [];
   }
 
   const fetchedTransactions = api.transactions.getTransactions({
@@ -49,7 +50,8 @@ export async function deleteTransactions(transactionIds: string[]) {
   const session = await getServerAuthSession();
 
   if (!session) {
-    throw Error("You must be signed in to perform this action");
+    console.warn("You must be signed in to perform this action");
+    return;
   }
 
   try {
@@ -64,7 +66,8 @@ export async function editTransaction(transaction: transaction) {
   const session = await getServerAuthSession();
 
   if (!session) {
-    throw Error("You must be signed in to perform this action");
+    console.warn("You must be signed in to perform this action");
+    return;
   }
 
   try {
@@ -85,7 +88,8 @@ export async function getMonthCategorySummary(
   const session = await getServerAuthSession();
 
   if (!session) {
-    throw Error("You must be signed in to perform this action");
+    console.warn("You must be signed in to perform this action");
+    return;
   }
 
   try {
