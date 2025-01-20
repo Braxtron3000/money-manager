@@ -100,17 +100,9 @@ const CategorySummaryTable = ({
     };
     console.log("onchangemonth ", newDateParams);
 
-    TransactionActions.getMonthCategorySummary(newDateParams).then((result) => {
-      if (result) {
-        setData(result);
-      } else console.log("no transactions for ", newDateParams);
-    });
+    TransactionActions.getMonthCategorySummary(newDateParams).then(setData);
 
-    BudgetActions.getLatest(newDateParams).then((result) => {
-      if (result) {
-        setBudget(result);
-      } else console.log("no budgets for ", newDateParams);
-    });
+    BudgetActions.getLatest(newDateParams).then(setBudget);
 
     setDate(dateParam);
   };

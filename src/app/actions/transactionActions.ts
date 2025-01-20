@@ -4,7 +4,7 @@ import { getServerAuthSession } from "~/server/auth";
 import { isCategory, transaction } from "~/types";
 import dayjs from "dayjs";
 
-export async function addTransactions(transactions: transaction[]) {
+export async function addTransactions(transactions: Omit<transaction, "id">[]) {
   try {
     console.log("adding transactions to db");
     const session = await getServerAuthSession(); //!Todo: whats going on here.

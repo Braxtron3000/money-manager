@@ -14,7 +14,7 @@ export const transactionsRouter = createTRPCRouter({
     .input(
       z
         .object({
-          id: z.string(),
+          // id: z.string(),
           description: z.string(),
           category: z.string(),
           pricing: z.number(),
