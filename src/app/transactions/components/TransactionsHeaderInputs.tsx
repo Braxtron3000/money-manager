@@ -108,12 +108,13 @@ function SearchInputs() {
             if (som.data.length > 0) {
               //!Todo: add these back in
               // const processedCSVFiles = processParsedCSVFile(som.data);
+              console.log("processing parsed files");
               const processedCSVFiles = processParsedCSVFile(som.data);
               addTransactions(processedCSVFiles);
               //!   setTransactions(processedCSVFiles);
             }
           } catch (error) {
-            console.error("lol psych \n" + error);
+            console.error("lol psych \n", error);
           }
         }
       };
@@ -147,12 +148,13 @@ function SearchInputs() {
   return (
     <div className="row-span-5 flex justify-between">
       <div className="row-span-5 my-4 flex w-4/12 gap-4 ">
-        <Input.Search
+        {/* <Input.Search
           placeholder="input search text"
           onSearch={onSearch}
           className="w-80"
         />
-        <Button icon={<FilterOutlined />}>Filter</Button>
+        */}
+        {/* <Button icon={<FilterOutlined />}>Filter</Button> */}
       </div>
       <div className="row-span-5 my-4 flex w-4/12 justify-center">
         <Upload {...props}>

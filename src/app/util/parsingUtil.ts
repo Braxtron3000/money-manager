@@ -31,8 +31,19 @@ export const isCreditCSVTransaction = (
 export const convertCSVTransaction = (
   csvTransaction: DebitCSVTransaction | CreditCSVTransaction,
   index: number,
-): transaction => {
-  console.log("row ", index);
+): Omit<transaction, "id"> | undefined => {
+  console.log("row ", index, { csvTransaction });
+
+  if (
+    !isCreditCSVTransaction(csvTransaction) &&
+    !isDebitCSVTransaction(csvTransaction)
+  ) {
+    console.warn(
+      "row " + index + " isnt a credit or debit transaction..skipping\n",
+      csvTransaction,
+    );
+    return;
+  }
   const date = dayjs(csvTransaction.Date);
   const description = parsingUtil.purifyDescriptionString(
     csvTransaction.Description,
@@ -41,7 +52,7 @@ export const convertCSVTransaction = (
     ? pncCategoryToThisCategory(csvTransaction.Category)
     : "credit cards/charge cards";
 
-  const key = index.toString();
+  // const key = index.toString();
 
   if (isDebitCSVTransaction(csvTransaction)) {
     console.log("it is debitcsvtransaction");
@@ -54,7 +65,7 @@ export const convertCSVTransaction = (
       date,
       category,
       description,
-      id: key,
+      // id: key,
       pricing: amount,
     };
   } else {
@@ -63,7 +74,7 @@ export const convertCSVTransaction = (
       category,
       description,
       date,
-      id: key,
+      // id: key,
       pricing: +csvTransaction.Amount.replaceAll("$", "").replaceAll(",", ""),
     };
   }
@@ -71,9 +82,11 @@ export const convertCSVTransaction = (
 
 export const processParsedCSVFile = (
   transactions: (DebitCSVTransaction | CreditCSVTransaction)[],
-): transaction[] => {
+): Omit<transaction, "id">[] => {
   if (transactions.at(0) && transactions[0]) {
-    return transactions.map(convertCSVTransaction);
+    return transactions
+      .map(convertCSVTransaction)
+      .filter((converted) => !!converted);
   } else return [];
 };
 
@@ -88,6 +101,7 @@ export const purifyDescriptionString = (rawDescription: string) => {
   const DEBIT_CARD_PURCHASE = "DEBIT CARD PURCHASE   XXXXX";
   const POS_PURCHASE_POS = "POS PURCHASE          POS";
   const ACH_CREDIT = "ACH CREDIT XXXXX";
+  console.log("purifying description\n\t\t", rawDescription);
 
   if (rawDescription.includes(DEBIT_CARD_PURCHASE)) {
     return rawDescription.replace(DEBIT_CARD_PURCHASE, "").replace(/\d+/, "");

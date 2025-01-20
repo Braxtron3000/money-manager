@@ -57,7 +57,12 @@ export const budgetsRouter = createTRPCRouter({
           createdBy: { connect: { id: ctx.session.user.id } },
           categories: { create: input.categories },
         },
-        update: {},
+        update: {
+          categories: {
+            deleteMany: {},
+            create: input.categories,
+          },
+        },
         include: {
           categories: true,
         },
@@ -92,7 +97,7 @@ export const budgetsRouter = createTRPCRouter({
       return ctx.db.budget.findFirst({
         where: {
           startDate: {
-            lt: lessthanDateString ? new Date(lessthanDateString) : new Date(),
+            lte: lessthanDateString ? new Date(lessthanDateString) : new Date(),
           },
         },
         orderBy: {
