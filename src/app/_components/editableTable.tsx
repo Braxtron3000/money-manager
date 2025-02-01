@@ -247,6 +247,7 @@ function EditableTable({
       title: " ",
       dataIndex: "operation",
       // width: "11%",
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (_: any, record: transaction) => {
         const editable = isEditing(record);
         return editable ? (

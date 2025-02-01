@@ -133,9 +133,17 @@ function SearchInputs() {
         console.log(info.file, info.fileList);
       }
       if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
+        try {
+          message.success(`${info.file.name} file uploaded successfully`);
+        } catch (error) {
+          console.error(error);
+        }
       } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
+        try {
+          message.error(`${info.file.name} file upload failed.`);
+        } catch (error) {
+          console.error(error);
+        }
       }
     },
     showUploadList: false,
