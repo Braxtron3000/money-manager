@@ -51,8 +51,8 @@ export default async function Home() {
             </Content>
           ) : (
             <h1>
-              What is this website? I'll tell you later. For right now, click
-              the sign in button in the top right
+              What is this website? Ill tell you later. For right now, click the
+              sign in button in the top right
             </h1>
           )}
         </Layout>

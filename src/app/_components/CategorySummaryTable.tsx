@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { categoryTree } from "~/types";
 import { categoryColors } from "../util/parsingUtil";
 import dayjs from "dayjs";
-import { api } from "~/trpc/server";
+import type { api } from "~/trpc/server";
 import * as TransactionActions from "../actions/transactionActions";
 import * as BudgetActions from "../actions/budgetActions";
 

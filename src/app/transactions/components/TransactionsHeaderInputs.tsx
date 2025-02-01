@@ -99,18 +99,19 @@ function SearchInputs() {
           console.log("parsing the baby");
           try {
             const som = Papa.parse<DebitCSVTransaction | CreditCSVTransaction>(
+              //eslint-disable-next-line @typescript-eslint/no-base-to-string
               e.target?.result?.toString(),
               { header: true },
             );
 
-            console.log("da babay is here: ", som);
+            console.log("stringified transaction: ", som);
 
             if (som.data.length > 0) {
               //!Todo: add these back in
               // const processedCSVFiles = processParsedCSVFile(som.data);
               console.log("processing parsed files");
               const processedCSVFiles = processParsedCSVFile(som.data);
-              addTransactions(processedCSVFiles);
+              addTransactions(processedCSVFiles).catch(console.error);
               //!   setTransactions(processedCSVFiles);
             }
           } catch (error) {

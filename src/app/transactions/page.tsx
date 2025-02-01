@@ -1,5 +1,4 @@
-import SideBarHeaderLayout from "../_components/SidebarHeaderLayout";
-import { GetProps, Input, Layout } from "antd";
+import { Layout } from "antd";
 import EditableTable from "../_components/editableTable";
 import Calendar from "../_components/Calendar";
 import { getTransactions } from "../actions/transactionActions";

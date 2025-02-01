@@ -11,7 +11,7 @@ export async function createBudget(
   if (session) {
     try {
       console.log("create log");
-      api.budgets.createBudget(budget);
+      api.budgets.createBudget(budget).catch(console.error);
     } catch (error) {
       console.error("error creating budget ", error);
     }

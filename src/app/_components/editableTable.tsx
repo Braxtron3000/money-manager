@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import type { CascaderProps } from "antd";
 import {
   Cascader,
@@ -13,12 +13,10 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { categoryTree, isCategory, transaction } from "~/types";
+import { categoryTree, transaction } from "~/types";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/es/table";
 import * as transactionActions from "../actions/transactionActions";
-import { api, RouterInputs, type ReactQueryOptions } from "~/trpc/react";
-import { describe } from "node:test";
 import { categoryColors } from "../util/parsingUtil";
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -277,8 +275,6 @@ function EditableTable({
             <Typography.Link
               disabled={editingKey !== ""}
               onClick={() => {
-                console.log("type of " + record.date);
-
                 edit({ ...record, key: record.id });
               }}
             >
@@ -325,8 +321,9 @@ function EditableTable({
           bordered
           dataSource={transactionState.map((transaction) => ({
             ...transaction,
-            date: dayjs(transaction.date), //! for some reason transaction.date is a string in runtime even though thats not its type.
+            date: dayjs(transaction.date), //! Todo: typeings
           }))}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore idk theres some funkiness with typescript.
           columns={mergedColumns}
           fixedHeader
