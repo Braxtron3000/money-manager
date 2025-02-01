@@ -134,12 +134,14 @@ function SearchInputs() {
       }
       if (info.file.status === "done") {
         try {
-          message.success(`${info.file.name} file uploaded successfully`);
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          message.success(`${info.file.name} file uploaded successfully`); //fine as long as catched
         } catch (error) {
           console.error(error);
         }
       } else if (info.file.status === "error") {
         try {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
           message.error(`${info.file.name} file upload failed.`);
         } catch (error) {
           console.error(error);
