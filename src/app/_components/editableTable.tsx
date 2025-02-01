@@ -24,7 +24,8 @@ import { categoryColors } from "../util/parsingUtil";
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
-  title: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  title: any; //!Todo: type this.
   inputType: "number" | "text" | "date" | "category";
   record: transaction;
   index: number;
@@ -164,7 +165,9 @@ function EditableTable({
         setEditingKey("");
       }
 
-      transactionActions.editTransaction({ ...row, id: key });
+      transactionActions
+        .editTransaction({ ...row, id: key })
+        .catch(console.error);
       setTransactionState(newData);
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
@@ -177,7 +180,9 @@ function EditableTable({
     const deletedItemDescription = transactionState.find(
       (transaction) => transaction.id === key,
     )?.description;
-    transactionActions.deleteTransactions([key.toString()]);
+    transactionActions
+      .deleteTransactions([key.toString()])
+      .catch(console.error);
 
     setTransactionState(
       transactionState.filter(

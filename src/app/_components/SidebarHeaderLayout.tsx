@@ -1,12 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import {
-  AreaChartOutlined,
-  TableOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-} from "@ant-design/icons";
-import { Button, Layout, Menu, MenuProps, theme } from "antd";
+import { AreaChartOutlined, TableOutlined } from "@ant-design/icons";
+import { Button, Layout, Menu, theme } from "antd";
 import { useRouter } from "next/navigation";
 
 const { Header, Sider, Content } = Layout;

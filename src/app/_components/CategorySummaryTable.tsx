@@ -1,10 +1,9 @@
 "use client";
-import { Prisma } from "@prisma/client";
 import { Button, DatePicker, InputNumber, Modal, Table, Tag, Card } from "antd";
-import type { FormInstance, TableColumnsType } from "antd";
+import type { TableColumnsType } from "antd";
 import type { DatePickerProps } from "antd";
-import React, { useEffect, useRef, useState } from "react";
-import { CategoryNode, categoryTree } from "~/types";
+import React, { useEffect, useState } from "react";
+import { categoryTree } from "~/types";
 import { categoryColors } from "../util/parsingUtil";
 import dayjs from "dayjs";
 import { api } from "~/trpc/server";
@@ -182,8 +181,8 @@ const CreateNewBudgetView = () => {
     setIsModalOpen(false);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function onChangeText(label: string, text: any | null) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
+  function onChangeText(label: string, text: any) {
     if (Number(text)) {
       budgetMap.set(label, Number(text));
     } else if (!text) {
