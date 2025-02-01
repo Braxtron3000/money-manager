@@ -89,7 +89,6 @@ export const transactionsRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       let nextMonthDisplay: string;
-      let thisMonthDisplay: string;
 
       if (input.month == 12) {
         nextMonthDisplay = "01";
@@ -101,7 +100,7 @@ export const transactionsRouter = createTRPCRouter({
             : "0" + nextmonthnumber;
       }
 
-      thisMonthDisplay =
+      const thisMonthDisplay =
         input.month >= 10 ? input.month.toString() : "0" + input.month;
 
       const greaterThanDateString = `${input.year}-${thisMonthDisplay}-01T00:00:00Z`;

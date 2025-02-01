@@ -99,18 +99,19 @@ function SearchInputs() {
           console.log("parsing the baby");
           try {
             const som = Papa.parse<DebitCSVTransaction | CreditCSVTransaction>(
+              //eslint-disable-next-line @typescript-eslint/no-base-to-string
               e.target?.result?.toString(),
               { header: true },
             );
 
-            console.log("da babay is here: ", som);
+            console.log("stringified transaction: ", som);
 
             if (som.data.length > 0) {
               //!Todo: add these back in
               // const processedCSVFiles = processParsedCSVFile(som.data);
               console.log("processing parsed files");
               const processedCSVFiles = processParsedCSVFile(som.data);
-              addTransactions(processedCSVFiles);
+              addTransactions(processedCSVFiles).catch(console.error);
               //!   setTransactions(processedCSVFiles);
             }
           } catch (error) {
@@ -132,9 +133,19 @@ function SearchInputs() {
         console.log(info.file, info.fileList);
       }
       if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          message.success(`${info.file.name} file uploaded successfully`); //fine as long as catched
+        } catch (error) {
+          console.error(error);
+        }
       } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          message.error(`${info.file.name} file upload failed.`);
+        } catch (error) {
+          console.error(error);
+        }
       }
     },
     showUploadList: false,

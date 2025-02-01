@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, MenuProps, theme } from "antd";
+import { Menu, MenuProps } from "antd";
 import { AreaChartOutlined, TableOutlined } from "@ant-design/icons";
 import { usePathname, useRouter } from "next/navigation";
 
