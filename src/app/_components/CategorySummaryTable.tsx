@@ -100,9 +100,18 @@ const CategorySummaryTable = ({
     };
     console.log("onchangemonth ", newDateParams);
 
-    TransactionActions.getMonthCategorySummary(newDateParams).then(setData);
+    TransactionActions.getMonthCategorySummary(newDateParams)
+      .then(setData)
+      .catch((e) =>
+        console.error(
+          "there was an issue setting the month category summary ",
+          e,
+        ),
+      );
 
-    BudgetActions.getLatest(newDateParams).then(setBudget);
+    BudgetActions.getLatest(newDateParams)
+      .then(setBudget)
+      .catch((e) => console.error("there was an issue setting the budget ", e));
 
     setDate(dateParam);
   };
@@ -157,17 +166,15 @@ const CreateNewBudgetView = () => {
       categories.push({ category, amount }),
     );
 
-    BudgetActions.createBudget({
+    const createButdgetParams = {
       categories,
       current: false,
       startDate: new Date(startDate.valueOf()),
-    }).then(() =>
-      console.log("created new budget! ", {
-        categories,
-        current: false,
-        startDate: new Date(startDate.valueOf()),
-      }),
-    );
+    };
+
+    BudgetActions.createBudget(createButdgetParams)
+      .then(() => console.log("created new budget! ", createButdgetParams))
+      .catch((e) => console.error("creating budget error: ", e));
     setIsModalOpen(false);
   };
 
@@ -216,6 +223,7 @@ const CreateNewBudgetView = () => {
               style={{ marginBottom: "1rem", marginTop: "1rem" }}
             >
               <Tag
+                key={"tag" + index}
                 color={categoryColors(
                   branch.value.charAt(0).toUpperCase() + branch.value.slice(1),
                 )}
