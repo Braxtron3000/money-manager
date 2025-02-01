@@ -84,11 +84,9 @@ export const processParsedCSVFile = (
   transactions: (DebitCSVTransaction | CreditCSVTransaction)[],
 ): Omit<transaction, "id">[] => {
   if (transactions.at(0) && transactions[0]) {
-    const returnVal: Omit<transaction, "id">[] = transactions
+    return transactions
       .map(convertCSVTransaction)
-      .filter((converted) => !!converted);
-
-    return returnVal;
+      .filter((converted): converted is Omit<transaction, "id"> => !!converted);
   } else return [];
 };
 
