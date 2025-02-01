@@ -182,6 +182,7 @@ const CreateNewBudgetView = () => {
     setIsModalOpen(false);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function onChangeText(label: string, text: any | null) {
     if (Number(text)) {
       budgetMap.set(label, Number(text));
@@ -231,8 +232,8 @@ const CreateNewBudgetView = () => {
                 <h2>{branch.value}</h2>
               </Tag>
               {branch.children ? (
-                branch.children.map((child) => (
-                  <div>
+                branch.children.map((child, index) => (
+                  <div key={index}>
                     <h2>{child.value}</h2>
                     <InputNumber
                       addonBefore={child.value === "Income" ? "+" : "-"}
