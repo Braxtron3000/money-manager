@@ -1,9 +1,4 @@
-import Link from "next/link";
-
 import { getServerAuthSession } from "~/server/auth";
-import { api } from "~/trpc/server";
-import SideBarHeaderLayout from "./_components/SidebarHeaderLayout";
-import { CreatePost } from "./_components/Create-post";
 import FullHeader from "./_components/header/Fullheader";
 import { Card, DatePicker, Layout, Space } from "antd";
 import { Content } from "antd/es/layout/layout";
