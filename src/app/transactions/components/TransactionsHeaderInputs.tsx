@@ -90,6 +90,8 @@ const convertCSVTransaction = (
 function SearchInputs() {
   const props: UploadProps = {
     beforeUpload(file) {
+      console.log("doign stuff");
+
       // Papa.parse(file, {});
 
       const reader = new FileReader();
@@ -104,7 +106,7 @@ function SearchInputs() {
               { header: true },
             );
 
-            console.log("stringified transaction: ", som);
+            console.log("stringified transaction: ", som.errors);
 
             if (som.data.length > 0) {
               //!Todo: add these back in

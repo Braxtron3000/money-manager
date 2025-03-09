@@ -17,7 +17,10 @@ export async function addTransactions(transactions: Omit<transaction, "id">[]) {
             date: new Date(transaction.date.valueOf()),
           })),
         )
-        .catch(console.error);
+        .then((onfullied) =>
+          console.log("successfully added transactions ", onfullied),
+        )
+        .catch((err) => console.error("error adding transactions ", err));
     } else console.warn("You must be signed in to perform this action");
   } catch (error) {
     console.error("problem adding Transactions to db ", error);

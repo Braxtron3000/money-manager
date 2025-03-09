@@ -47,7 +47,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     children?: Option[];
   }
   const onChange: CascaderProps<Option>["onChange"] = (value) => {
-    console.log(value);
+    console.log("changing to " + value);
   };
 
   function getInputNode() {
@@ -71,7 +71,11 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
               label: node.value,
             }))}
             // expandTrigger="hover"
-            displayRender={(value) => value.join("    ")}
+            displayRender={(value) => {
+              const displayrender = value.at(-1);
+              console.log("display render ", displayrender);
+              return displayrender;
+            }}
             // displayRender={displayRender}
             onChange={onChange}
           />
@@ -147,7 +151,7 @@ function EditableTable({
       let row = await form.validateFields(); //! Todo: if you stringify print this it looks like it actually sends a partial transaction.
 
       row = { ...row, category: row.category.toString() };
-
+      console.log("saving row ", row);
       const newData = [...transactionState];
       const index = newData.findIndex((transaction) => key === transaction.id);
       if (index > -1) {
@@ -163,8 +167,12 @@ function EditableTable({
         setEditingKey("");
       }
 
+      //antd wants to save the options of a category into an array ("something, somethingelse"). we just need the last one.
+      //this is what happens when you use a ui library.
+      const newCategory = row.category.split(",").at(-1) ?? row.category;
+
       transactionActions
-        .editTransaction({ ...row, id: key })
+        .editTransaction({ ...row, category: newCategory, id: key })
         .catch(console.error);
       setTransactionState(newData);
     } catch (errInfo) {
@@ -217,7 +225,13 @@ function EditableTable({
       key: "category",
       render: (_, record) => {
         return (
-          <Tag color={categoryColors(record.category)}>{record.category}</Tag>
+          <Tag
+            color={categoryColors(
+              record.category.split(",").at(-1) ?? record.category,
+            )}
+          >
+            {record.category}
+          </Tag>
         );
       },
       // width: "25%",
