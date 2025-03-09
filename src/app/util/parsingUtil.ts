@@ -86,7 +86,7 @@ export const processParsedCSVFile = (
   if (transactions.at(0) && transactions[0]) {
     return transactions
       .map(convertCSVTransaction)
-      .filter((converted) => !!converted);
+      .filter((converted): converted is Omit<transaction, "id"> => !!converted);
   } else return [];
 };
 

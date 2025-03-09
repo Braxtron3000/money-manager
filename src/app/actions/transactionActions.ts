@@ -9,13 +9,18 @@ export async function addTransactions(transactions: Omit<transaction, "id">[]) {
     console.log("adding transactions to db");
     const session = await getServerAuthSession(); //!Todo: whats going on here.
     if (session) {
-      api.transactions.createTransactions(
-        transactions.map((transaction) => ({
-          ...transaction,
-          createdById: session?.user.id ?? "",
-          date: new Date(transaction.date.valueOf()),
-        })),
-      );
+      api.transactions
+        .createTransactions(
+          transactions.map((transaction) => ({
+            ...transaction,
+            createdById: session?.user.id ?? "",
+            date: new Date(transaction.date.valueOf()),
+          })),
+        )
+        .then((onfullied) =>
+          console.log("successfully added transactions ", onfullied),
+        )
+        .catch((err) => console.error("error adding transactions ", err));
     } else console.warn("You must be signed in to perform this action");
   } catch (error) {
     console.error("problem adding Transactions to db ", error);
@@ -55,7 +60,7 @@ export async function deleteTransactions(transactionIds: string[]) {
   }
 
   try {
-    api.transactions.deleteTransactions(transactionIds);
+    api.transactions.deleteTransactions(transactionIds).catch(console.error);
     console.log("deleting transactions ", transactionIds);
   } catch (error) {
     console.error("error deleting transactions: ", error);
@@ -72,11 +77,13 @@ export async function editTransaction(transaction: transaction) {
 
   try {
     console.log("updating transaction ", transaction);
-    api.transactions.editTransaction({
-      ...transaction,
-      date: new Date(transaction.date.valueOf()),
-      createdById: transaction.createdById ?? "", //! i need to solidify typing or we could end up with null createdbyids.
-    });
+    api.transactions
+      .editTransaction({
+        ...transaction,
+        date: new Date(transaction.date.valueOf()),
+        createdById: transaction.createdById ?? "", //! i need to solidify typing or we could end up with null createdbyids.
+      })
+      .catch(console.error);
   } catch (error) {
     console.error("error updating transactions: ", error);
   }

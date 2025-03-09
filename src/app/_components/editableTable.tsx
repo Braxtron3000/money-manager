@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import type { CascaderProps } from "antd";
 import {
   Cascader,
@@ -13,18 +13,17 @@ import {
   Tag,
   Typography,
 } from "antd";
-import { categoryTree, isCategory, transaction } from "~/types";
+import { categoryTree, transaction } from "~/types";
 import dayjs from "dayjs";
 import { ColumnsType } from "antd/es/table";
 import * as transactionActions from "../actions/transactionActions";
-import { api, RouterInputs, type ReactQueryOptions } from "~/trpc/react";
-import { describe } from "node:test";
 import { categoryColors } from "../util/parsingUtil";
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
   dataIndex: string;
-  title: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  title: any; //!Todo: type this.
   inputType: "number" | "text" | "date" | "category";
   record: transaction;
   index: number;
@@ -48,7 +47,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     children?: Option[];
   }
   const onChange: CascaderProps<Option>["onChange"] = (value) => {
-    console.log(value);
+    console.log("changing to " + value);
   };
 
   function getInputNode() {
@@ -72,7 +71,11 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
               label: node.value,
             }))}
             // expandTrigger="hover"
-            displayRender={(value) => value.join("    ")}
+            displayRender={(value) => {
+              const displayrender = value.at(-1);
+              console.log("display render ", displayrender);
+              return displayrender;
+            }}
             // displayRender={displayRender}
             onChange={onChange}
           />
@@ -148,7 +151,7 @@ function EditableTable({
       let row = await form.validateFields(); //! Todo: if you stringify print this it looks like it actually sends a partial transaction.
 
       row = { ...row, category: row.category.toString() };
-
+      console.log("saving row ", row);
       const newData = [...transactionState];
       const index = newData.findIndex((transaction) => key === transaction.id);
       if (index > -1) {
@@ -164,7 +167,13 @@ function EditableTable({
         setEditingKey("");
       }
 
-      transactionActions.editTransaction({ ...row, id: key });
+      //antd wants to save the options of a category into an array ("something, somethingelse"). we just need the last one.
+      //this is what happens when you use a ui library.
+      const newCategory = row.category.split(",").at(-1) ?? row.category;
+
+      transactionActions
+        .editTransaction({ ...row, category: newCategory, id: key })
+        .catch(console.error);
       setTransactionState(newData);
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
@@ -177,7 +186,9 @@ function EditableTable({
     const deletedItemDescription = transactionState.find(
       (transaction) => transaction.id === key,
     )?.description;
-    transactionActions.deleteTransactions([key.toString()]);
+    transactionActions
+      .deleteTransactions([key.toString()])
+      .catch(console.error);
 
     setTransactionState(
       transactionState.filter(
@@ -214,7 +225,13 @@ function EditableTable({
       key: "category",
       render: (_, record) => {
         return (
-          <Tag color={categoryColors(record.category)}>{record.category}</Tag>
+          <Tag
+            color={categoryColors(
+              record.category.split(",").at(-1) ?? record.category,
+            )}
+          >
+            {record.category}
+          </Tag>
         );
       },
       // width: "25%",
@@ -244,6 +261,7 @@ function EditableTable({
       title: " ",
       dataIndex: "operation",
       // width: "11%",
+      //eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (_: any, record: transaction) => {
         const editable = isEditing(record);
         return editable ? (
@@ -272,8 +290,6 @@ function EditableTable({
             <Typography.Link
               disabled={editingKey !== ""}
               onClick={() => {
-                console.log("type of " + record.date);
-
                 edit({ ...record, key: record.id });
               }}
             >
@@ -320,8 +336,9 @@ function EditableTable({
           bordered
           dataSource={transactionState.map((transaction) => ({
             ...transaction,
-            date: dayjs(transaction.date), //! for some reason transaction.date is a string in runtime even though thats not its type.
+            date: dayjs(transaction.date), //! Todo: typeings
           }))}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           //@ts-ignore idk theres some funkiness with typescript.
           columns={mergedColumns}
           fixedHeader

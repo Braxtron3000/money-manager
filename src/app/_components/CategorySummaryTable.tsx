@@ -1,13 +1,12 @@
 "use client";
-import { Prisma } from "@prisma/client";
 import { Button, DatePicker, InputNumber, Modal, Table, Tag, Card } from "antd";
-import type { FormInstance, TableColumnsType } from "antd";
+import type { TableColumnsType } from "antd";
 import type { DatePickerProps } from "antd";
-import React, { useEffect, useRef, useState } from "react";
-import { CategoryNode, categoryTree } from "~/types";
+import React, { useEffect, useState } from "react";
+import { categoryTree } from "~/types";
 import { categoryColors } from "../util/parsingUtil";
 import dayjs from "dayjs";
-import { api } from "~/trpc/server";
+import type { api } from "~/trpc/server";
 import * as TransactionActions from "../actions/transactionActions";
 import * as BudgetActions from "../actions/budgetActions";
 
@@ -100,9 +99,18 @@ const CategorySummaryTable = ({
     };
     console.log("onchangemonth ", newDateParams);
 
-    TransactionActions.getMonthCategorySummary(newDateParams).then(setData);
+    TransactionActions.getMonthCategorySummary(newDateParams)
+      .then(setData)
+      .catch((e) =>
+        console.error(
+          "there was an issue setting the month category summary ",
+          e,
+        ),
+      );
 
-    BudgetActions.getLatest(newDateParams).then(setBudget);
+    BudgetActions.getLatest(newDateParams)
+      .then(setBudget)
+      .catch((e) => console.error("there was an issue setting the budget ", e));
 
     setDate(dateParam);
   };
@@ -157,17 +165,15 @@ const CreateNewBudgetView = () => {
       categories.push({ category, amount }),
     );
 
-    BudgetActions.createBudget({
+    const createButdgetParams = {
       categories,
       current: false,
       startDate: new Date(startDate.valueOf()),
-    }).then(() =>
-      console.log("created new budget! ", {
-        categories,
-        current: false,
-        startDate: new Date(startDate.valueOf()),
-      }),
-    );
+    };
+
+    BudgetActions.createBudget(createButdgetParams)
+      .then(() => console.log("created new budget! ", createButdgetParams))
+      .catch((e) => console.error("creating budget error: ", e));
     setIsModalOpen(false);
   };
 
@@ -175,7 +181,8 @@ const CreateNewBudgetView = () => {
     setIsModalOpen(false);
   };
 
-  function onChangeText(label: string, text: any | null) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
+  function onChangeText(label: string, text: any) {
     if (Number(text)) {
       budgetMap.set(label, Number(text));
     } else if (!text) {
@@ -216,6 +223,7 @@ const CreateNewBudgetView = () => {
               style={{ marginBottom: "1rem", marginTop: "1rem" }}
             >
               <Tag
+                key={"tag" + index}
                 color={categoryColors(
                   branch.value.charAt(0).toUpperCase() + branch.value.slice(1),
                 )}
@@ -223,8 +231,8 @@ const CreateNewBudgetView = () => {
                 <h2>{branch.value}</h2>
               </Tag>
               {branch.children ? (
-                branch.children.map((child) => (
-                  <div>
+                branch.children.map((child, index) => (
+                  <div key={index}>
                     <h2>{child.value}</h2>
                     <InputNumber
                       addonBefore={child.value === "Income" ? "+" : "-"}
