@@ -224,15 +224,10 @@ function EditableTable({
       dataIndex: "category",
       key: "category",
       render: (_, record) => {
-        return (
-          <Tag
-            color={categoryColors(
-              record.category.split(",").at(-1) ?? record.category,
-            )}
-          >
-            {record.category}
-          </Tag>
-        );
+        const category = record.category.split(",").at(-1) ?? record.category;
+        console.log("category ", category);
+
+        return <Tag color={categoryColors(category)}>{record.category}</Tag>;
       },
       // width: "25%",
       editable: true,
