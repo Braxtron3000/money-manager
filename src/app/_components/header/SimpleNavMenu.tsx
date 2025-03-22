@@ -1,43 +1,22 @@
 "use client";
 
-import { Menu, MenuProps } from "antd";
-import { AreaChartOutlined, TableOutlined } from "@ant-design/icons";
-import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
-const SimpleNavMenu = ({ disabled }: { disabled: boolean }) => {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  type MenuItem = Required<MenuProps>["items"][number];
-  const items: MenuItem[] = [
-    {
-      label: "Dashboard",
-      key: "/",
-      icon: <AreaChartOutlined />,
-      disabled,
-      onClick: function () {
-        router.replace("/");
-      },
-    },
-    {
-      label: "Transactions",
-      key: "/transactions",
-      icon: <TableOutlined />,
-      disabled,
-      onClick: function () {
-        router.replace("/transactions");
-      },
-    },
-  ];
-
+const SimpleNavMenu = ({ session }: { session: boolean }) => {
   return (
-    <Menu
-      mode="horizontal"
-      selectedKeys={[pathname]}
-      theme="dark"
-      items={items}
-      style={{ flex: 1, minWidth: 0, backgroundColor: "transparent" }}
-    />
+    <header className="bg-green-800">
+      <nav className="flex justify-around">
+        <Link href={"/"} className="">
+          Dashboard
+        </Link>
+        <Link href={"/transactions"} className="">
+          Transactions
+        </Link>
+        <Link href={session ? "/api/auth/signout" : "/api/auth/signin"}>
+          {session ? "sign out" : "sign in"}
+        </Link>
+      </nav>
+    </header>
   );
 };
 
